@@ -1,0 +1,196 @@
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router';
+import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { useAuth } from '../../contexts/AuthContext';
+import { toast } from '../../utils/toastWithSound';
+
+export function Login() {
+  const { login, user, setUser } = useAuth(); // setUser might be needed for Google login
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    remember: false,
+  });
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  React.useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const success = await login(formData.email, formData.password, formData.remember);
+      if (success) {
+        toast.success('Login successful!');
+        navigate('/');
+      } else {
+        toast.error('Invalid email or password');
+      }
+    } catch (error) {
+      toast.error('An error occurred during login');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Google login success handler
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+    const token = credentialResponse.credential;
+    if (!token) {
+      toast.error('Google login failed – no token received');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Store user data and token using your existing storage logic
+        if (data.remember) {
+          localStorage.setItem('tamcc_token', data.token);
+          localStorage.setItem('tamcc_user', JSON.stringify(data.user));
+        } else {
+          sessionStorage.setItem('tamcc_token', data.token);
+          sessionStorage.setItem('tamcc_user', JSON.stringify(data.user));
+        }
+        setUser(data.user);
+        toast.success('Google login successful!');
+        navigate('/');
+      } else {
+        toast.error(data.error || 'Google login failed');
+      }
+    } catch (error) {
+      console.error('Google login error:', error);
+      toast.error('Could not verify Google login');
+    }
+  };
+
+  const handleGoogleError = () => {
+    console.error('Google login failed');
+    toast.error('Google login failed – please try again');
+  };
+
+  return (
+    <div className="relative min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-cover bg-center"
+         style={{ backgroundImage: `url('https://www.outlooktravelmag.com/media/MAIN-Grenada-Landmark-Attractions.webp')` }}>
+      <div className="absolute inset-0 bg-black/50"></div>
+      <Card className="relative z-10 w-full max-w-md bg-white/95 backdrop-blur-sm">
+        <CardHeader className="text-center">
+          <div className="flex justify-center mb-4">
+            <div className="w-16 h-16 bg-[#074af2] rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-2xl">T</span>
+            </div>
+          </div>
+          <CardTitle className="text-2xl">Sign in to Marryshow's Mealhouse</CardTitle>
+          <p className="text-gray-600 text-sm mt-2">Enter your credentials to access your account</p>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Label htmlFor="email">Email Address</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="your.email@tamcc.edu.gd"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Enter your password"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  required
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <label className="flex items-center space-x-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.remember}
+                  onChange={(e) => setFormData({ ...formData, remember: e.target.checked })}
+                  className="w-4 h-4 border-gray-300 rounded"
+                />
+                <span className="text-sm text-gray-600">Remember Me</span>
+              </label>
+              <Link to="/forgot-password" className="text-sm text-[#074af2] hover:underline">Forgot password?</Link>
+            </div>
+            <Button type="submit" className="w-full bg-[#074af2] hover:bg-[#0639c0]" disabled={loading}>
+              {loading ? 'Signing in...' : 'Sign In'}
+            </Button>
+          </form>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-300" /></div>
+            <div className="relative flex justify-center text-sm"><span className="px-2 bg-white text-gray-500">Or continue with</span></div>
+          </div>
+
+          {/* Google Login Button */}
+          <div className="flex justify-center">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              useOneTap
+            />
+          </div>
+
+          <div className="mt-6 text-center text-sm">
+            <span className="text-gray-600">Don't have an account? </span>
+            <Link to="/register" className="text-[#074af2] hover:underline font-medium">Create One Now</Link>
+          </div>
+
+          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-sm font-medium text-blue-900 mb-2">Demo Credentials:</p>
+            <p className="text-xs text-blue-800"><strong>Admin:</strong> admin@tamcc.edu.gd / password</p>
+            <p className="text-xs text-blue-800 mt-1"><strong>Kiosk:</strong> kiosk@tamcc.edu.gd / password</p>
+            <p className="text-xs text-blue-800 mt-1"><strong>Customer:</strong> Any email / Any password</p>
+          </div>
+
+          <div className="mt-6 text-center">
+            <p className="text-xs text-gray-500">By signing in, you agree to our <Link to="/terms" className="text-[#074af2] hover:underline">Terms of Service</Link> and <Link to="/privacy" className="text-[#074af2] hover:underline">Privacy Policy</Link></p>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

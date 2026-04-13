@@ -1,0 +1,4 @@
+/* Optional: import Geist and Inter fonts if you have them installed */
+/* If not installed, comment out or remove these lines */
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/inter';

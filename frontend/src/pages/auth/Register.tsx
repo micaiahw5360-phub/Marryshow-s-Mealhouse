@@ -20,7 +20,11 @@ export function Register() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
+    // MUST be first line
     e.preventDefault();
+
+    // Optional: log to verify the handler is called
+    console.log('Register form submitted');
 
     if (formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match');
@@ -37,8 +41,8 @@ export function Register() {
 
     setLoading(true);
 
-    // Use environment variable on Render, fallback to hardcoded backend URL
-    const apiBase = import.meta.env.VITE_API_URL || 'https://marryshows-mealhouse.onrender.com';
+    // ✅ Hardcoded correct backend URL (no environment variable)
+    const apiBase = 'https://marryshows-mealhouse.onrender.com';
     
     try {
       const response = await fetch(`${apiBase}/register`, {
@@ -57,7 +61,6 @@ export function Register() {
         toast.success('Account created successfully! Please log in.');
         navigate('/login');
       } else {
-        // Display the error message from the backend
         toast.error(data.error || 'Registration failed. Please try again.');
       }
     } catch (error) {

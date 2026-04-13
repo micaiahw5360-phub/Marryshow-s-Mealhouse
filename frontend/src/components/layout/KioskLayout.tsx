@@ -17,18 +17,7 @@ export function KioskLayout() {
 
   return (
     <div className="kiosk-shell">
-      {/* Simple header */}
-      <header className="kiosk-header">
-        <div className="flex items-center gap-3">
-          <img src="/chef.png" alt="Mascot" className="h-12 w-12 object-contain" />
-          <div>
-            <div className="kiosk-title text-xl">Marryshow's Mealhouse</div>
-            <div className="kiosk-subtle text-xs">Kiosk Mode</div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main content – full width */}
+      {/* Main content – full width (header removed) */}
       <main className="kiosk-main">
         <Outlet />
       </main>

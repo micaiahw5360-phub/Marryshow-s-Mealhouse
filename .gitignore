@@ -6,16 +6,17 @@ node_modules/
 vendor/
 composer.lock    # optional, commit if you want exact versions
 
-# Build output
+# Build output (frontend)
 dist/
 dist-ssr/
 build/
 
-# Environment files
+# Environment files (local only)
 .env
 .env.local
 .env.production
 .env.*.local
+backend/.env
 
 # Logs
 logs/
@@ -25,13 +26,13 @@ yarn-debug.log*
 yarn-error.log*
 php_error.log
 
-# Cache / temp
+# Cache / temp files
 .vite/
 .cache/
 tmp/
 *.tmp
 
-# IDE / OS
+# IDE / OS files
 .vscode/
 .idea/
 *.swp
@@ -43,13 +44,18 @@ Thumbs.db
 # Composer (PHP)
 composer.phar
 
-# Laragon / Windows specific
+# Windows / Laragon specific
 *.exe
 *.bat.local
 
-# Uploads (if any)
+# Uploads and storage (if your app creates these)
 uploads/
 storage/
+backend/api/uploads/
 
 # TypeScript build info
 *.tsbuildinfo
+
+# Optional: ignore Dockerfile backup or local configs
+*.dockerignore
+*.bak

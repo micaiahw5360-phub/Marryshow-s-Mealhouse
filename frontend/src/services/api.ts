@@ -1,5 +1,10 @@
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost/MarryShow-Mealhouse/backend/api';
 
+// Optional: warn if running in production without a proper API_BASE
+if (import.meta.env.PROD && !import.meta.env.VITE_API_URL) {
+  console.warn('⚠️ VITE_API_URL is not set. Using fallback: ' + API_BASE);
+}
+
 async function fetchAPI<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const token = localStorage.getItem('tamcc_token') || sessionStorage.getItem('tamcc_token');
   const headers: HeadersInit = {};
@@ -118,7 +123,6 @@ export const kioskService = {
     fetchAPI<{ id: number; email: string; username: string; name: string; wallet_balance: number }>(
       `/kiosk/user-by-email.php?email=${encodeURIComponent(email)}`
     ),
-  // ✅ NEW: get current wallet balance for a kiosk user
   getBalance: (email: string) =>
     fetchAPI<{ success: boolean; balance: number }>(`/kiosk/balance.php?email=${encodeURIComponent(email)}`),
 };

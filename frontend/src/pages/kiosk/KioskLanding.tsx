@@ -1,4 +1,4 @@
-// KioskLanding.tsx - Fresh, modern landing page with new styling
+// KioskLanding.tsx - Simplified with single prominent CTA
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 
@@ -57,24 +57,18 @@ export function KioskLanding() {
         </div>
       </div>
 
-      {/* Primary CTA Buttons */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+      {/* Single Large CTA Button */}
+      <div className="flex justify-center mb-16">
         <button
           onClick={() => navigate('/kiosk/categories')}
-          className="kiosk-btn kiosk-primary px-8 py-4 text-xl font-bold flex items-center justify-center gap-2"
+          className="kiosk-btn kiosk-primary px-12 py-5 text-2xl md:text-3xl font-bold flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transition-all"
         >
           🛍️ Start Ordering
-        </button>
-        <button
-          onClick={() => navigate('/kiosk/categories')}
-          className="kiosk-btn kiosk-outline px-8 py-4 text-xl font-bold flex items-center justify-center gap-2"
-        >
-          📋 View Full Menu
         </button>
       </div>
 
       {/* Feature Tiles – Simple, card-like */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="kiosk-tile text-center">
           <div className="text-5xl mb-3">🥪</div>
           <h3 className="text-xl font-bold text-neutral-800">Made Fresh</h3>
@@ -90,18 +84,6 @@ export function KioskLanding() {
           <h3 className="text-xl font-bold text-neutral-800">Wallet Ready</h3>
           <p className="text-neutral-500 mt-1">Pay with your TAMCC wallet balance.</p>
         </div>
-      </div>
-
-      {/* Bottom Callout – Simple gradient box */}
-      <div className="bg-gradient-to-br from-primary-50 to-white rounded-3xl p-8 text-center max-w-3xl mx-auto border border-primary-100">
-        <h2 className="text-3xl font-black text-neutral-800">Hungry? 😋</h2>
-        <p className="text-neutral-600 mt-2 text-lg">Tap below and build your meal in seconds.</p>
-        <button
-          onClick={() => navigate('/kiosk/categories')}
-          className="kiosk-btn kiosk-primary mt-6 px-8 py-4 text-xl font-bold"
-        >
-          Order Now 🚀
-        </button>
       </div>
     </div>
   );

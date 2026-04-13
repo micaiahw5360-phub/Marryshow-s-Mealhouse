@@ -61,7 +61,7 @@ export function KioskOrderConfirmation() {
   if (loading) {
     return (
       <div className="text-center py-16">
-        <div className="kiosk-spinner mx-auto" />
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-school-600 border-t-transparent"></div>
         <p className="mt-4 text-lg">Loading your order...</p>
       </div>
     );
@@ -73,8 +73,8 @@ export function KioskOrderConfirmation() {
         <div className="text-6xl mb-4">⚠️</div>
         <h2 className="text-2xl font-bold text-red-600">Order Not Found</h2>
         <p className="text-slate-600 mt-2">{error}</p>
-        <button onClick={loadOrder} className="kiosk-btn kiosk-btn-primary mt-6">
-          <RefreshCw className="w-4 h-4" /> Retry
+        <button onClick={loadOrder} className="kiosk-btn kiosk-primary mt-6">
+          <RefreshCw className="w-4 h-4 inline mr-2" /> Retry
         </button>
       </div>
     );
@@ -84,25 +84,29 @@ export function KioskOrderConfirmation() {
 
   return (
     <>
-      {/* Screen View */}
+      {/* Screen View – no auto-redirect */}
       <div className="print:hidden">
         <div className="flex justify-between items-center mb-6">
-          <button onClick={() => navigate('/kiosk')} className="kiosk-btn kiosk-btn-secondary">← Back to Home</button>
-          <button onClick={handlePrint} className="kiosk-btn kiosk-btn-secondary"><FileText className="w-4 h-4" /> Print Receipt</button>
+          <button onClick={() => navigate('/kiosk')} className="kiosk-btn bg-white px-6 py-2">
+            ← Back to Home
+          </button>
+          <button onClick={handlePrint} className="kiosk-btn bg-white px-6 py-2">
+            <FileText className="w-4 h-4 inline mr-2" /> Print Receipt
+          </button>
         </div>
-        <div className="kiosk-card max-w-2xl mx-auto text-center">
-          <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-12 h-12 text-green-600" />
+        <div className="kiosk-panel max-w-2xl mx-auto text-center p-8">
+          <div className="w-28 h-28 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <CheckCircle className="w-14 h-14 text-green-600" />
           </div>
-          <h1 className="text-3xl font-bold text-green-600 mb-2">Order Confirmed!</h1>
-          <p className="text-slate-600 mb-6">Thank you for your order. Your food is being prepared.</p>
+          <h1 className="text-4xl font-bold text-green-600 mb-2">Order Confirmed!</h1>
+          <p className="text-slate-600 mb-6 text-lg">Thank you for your order. Your food is being prepared.</p>
 
           <div className="bg-slate-50 rounded-2xl p-6 text-left space-y-2">
             <div className="flex justify-between"><span className="font-bold">Order #</span><span>{orderDetails.orderNumber}</span></div>
             {orderDetails.customerName && <div className="flex justify-between"><span className="font-bold">Name</span><span>{orderDetails.customerName}</span></div>}
             {orderDetails.customerEmail && <div className="flex justify-between"><span className="font-bold">Email</span><span>{orderDetails.customerEmail}</span></div>}
             {orderDetails.customerPhone && <div className="flex justify-between"><span className="font-bold">Phone</span><span>{orderDetails.customerPhone}</span></div>}
-            <div className="flex justify-between"><span className="font-bold">Total</span><span className="text-school-800 text-xl font-bold">${orderDetails.total.toFixed(2)}</span></div>
+            <div className="flex justify-between"><span className="font-bold">Total</span><span className="text-school-800 text-2xl font-bold">${orderDetails.total.toFixed(2)}</span></div>
             <div className="flex justify-between"><span className="font-bold">Payment</span><span className="capitalize">{orderDetails.paymentMethod === 'cash' ? 'Cash on Pickup' : orderDetails.paymentMethod}</span></div>
             <div className="flex justify-between"><span className="font-bold">Order Time</span><span>{orderTime}</span></div>
             {orderDetails.pickupTime && <div className="flex justify-between"><span className="font-bold">Pickup Time</span><span>{orderDetails.pickupTime}</span></div>}
@@ -117,20 +121,24 @@ export function KioskOrderConfirmation() {
             </div>
           </div>
 
-          <div className="mt-6 p-4 bg-school-50 rounded-xl text-sm">
-            <p className="font-bold">Pickup Location:</p>
+          <div className="mt-6 p-5 bg-school-50 rounded-xl text-sm">
+            <p className="font-bold text-school-800">Pickup Location:</p>
             <p>Marryshow's Mealhouse, TAMCC Campus</p>
             <p className="text-xs mt-1">Please show your order number when collecting.</p>
           </div>
 
           <div className="flex gap-4 mt-8 justify-center">
-            <Link to="/kiosk/categories"><button className="kiosk-btn kiosk-btn-secondary"><ShoppingBag className="w-4 h-4 inline mr-2" /> Order Again</button></Link>
-            <Link to="/kiosk"><button className="kiosk-btn kiosk-btn-primary">Back to Home</button></Link>
+            <Link to="/kiosk/categories">
+              <button className="kiosk-btn bg-white px-6 py-3"><ShoppingBag className="w-4 h-4 inline mr-2" /> Order Again</button>
+            </Link>
+            <Link to="/kiosk">
+              <button className="kiosk-btn kiosk-primary px-6 py-3">Back to Home</button>
+            </Link>
           </div>
         </div>
       </div>
 
-      {/* Printable Receipt */}
+      {/* Printable Receipt – full page when printed */}
       <div className="hidden print:block print:visible">
         <div className="max-w-2xl mx-auto p-8 font-mono text-sm">
           <div className="text-center border-b pb-4 mb-4">
@@ -178,7 +186,8 @@ export function KioskOrderConfirmation() {
           body * { visibility: hidden; }
           .print\\:block, .print\\:block * { visibility: visible; }
           .print\\:block { position: absolute; left: 0; top: 0; width: 100%; }
-          .no-print { display: none; }
+          .no-print, .print\\:hidden { display: none; }
+          button { display: none; }
         }
       `}</style>
     </>

@@ -58,12 +58,12 @@ export function KioskGetUser() {
 
   return (
     <div className="max-w-md mx-auto">
-      <button onClick={() => navigate('/kiosk/cart')} className="kiosk-btn bg-white px-5 py-2 mb-6">
+      <button onClick={() => navigate('/kiosk/cart')} className="kiosk-btn bg-white px-6 py-2 mb-6">
         ← Back to Cart
       </button>
 
       <div className="kiosk-panel p-8 text-center">
-        <div className="text-6xl mb-4">💰</div>
+        <div className="text-7xl mb-4">💰</div>
         <h1 className="kiosk-title text-3xl">Identify Yourself</h1>
         <p className="kiosk-subtle mt-2">Enter your email to use your wallet balance</p>
 
@@ -77,7 +77,7 @@ export function KioskGetUser() {
               placeholder="your@email.com"
               autoFocus
               disabled={loading}
-              className="w-full p-4 border border-kiosk-line rounded-kiosk text-lg"
+              className="w-full p-4 border border-kiosk-line rounded-kiosk text-lg focus:outline-none focus:ring-2 focus:ring-school-500"
             />
             {error && <p className="text-red-600 mt-2">⚠️ {error}</p>}
           </div>

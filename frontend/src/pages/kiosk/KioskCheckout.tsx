@@ -20,7 +20,7 @@ export function KioskCheckout() {
   const [guestName, setGuestName] = useState('');
   const [walletBalance, setWalletBalance] = useState(identifiedUser?.walletBalance || 0);
 
-  // ✅ 1. Real‑time wallet balance check
+  // Real‑time wallet balance check
   useEffect(() => {
     const fetchLatestBalance = async () => {
       if (paymentMethod === 'wallet' && identifiedUser?.email) {
@@ -96,9 +96,9 @@ export function KioskCheckout() {
 
   if (orderPlaced) {
     return (
-      <div className="text-center py-12">
-        <div className="text-6xl mb-4">✓</div>
-        <h2 className="text-3xl font-bold">Order Placed!</h2>
+      <div className="text-center py-16">
+        <div className="text-7xl mb-4">✓</div>
+        <h2 className="text-3xl font-bold text-green-600">Order Placed!</h2>
         <p className="text-lg mt-2">Redirecting to confirmation...</p>
       </div>
     );
@@ -106,7 +106,7 @@ export function KioskCheckout() {
 
   if (cartItems.length === 0) {
     return (
-      <div className="text-center py-12">
+      <div className="text-center py-16">
         <h2 className="text-3xl font-bold">Cart is empty</h2>
         <button onClick={() => navigate('/kiosk/categories')} className="kiosk-btn mt-6 px-6 py-3">
           Browse Menu
@@ -117,14 +117,15 @@ export function KioskCheckout() {
 
   return (
     <div>
-      <button onClick={() => navigate('/kiosk/cart')} className="kiosk-btn bg-white px-5 py-2 mb-6">
+      <button onClick={() => navigate('/kiosk/cart')} className="kiosk-btn bg-white px-6 py-2 mb-6">
         ← Back to Cart
       </button>
       <h1 className="kiosk-title text-4xl mb-6">Checkout</h1>
 
       <div className="grid md:grid-cols-2 gap-8">
+        {/* Order Summary */}
         <div className="kiosk-panel p-6">
-          <h2 className="text-2xl font-bold mb-4">Order Summary</h2>
+          <h2 className="text-2xl font-bold text-school-800 mb-4">Order Summary</h2>
           <div className="space-y-2">
             {cartItems.map((item) => (
               <div key={item.id} className="flex justify-between">
@@ -141,8 +142,9 @@ export function KioskCheckout() {
           </div>
         </div>
 
+        {/* Payment Method */}
         <div className="kiosk-panel p-6">
-          <h2 className="text-2xl font-bold mb-4">Payment Method</h2>
+          <h2 className="text-2xl font-bold text-school-800 mb-4">Payment Method</h2>
           <div className="space-y-4">
             {identifiedUser && (
               <label className="flex items-center gap-3 p-3 border rounded-kiosk cursor-pointer">
@@ -173,14 +175,13 @@ export function KioskCheckout() {
             </label>
           </div>
 
-          {/* ✅ 8. Guest name input for cash orders */}
           {paymentMethod === 'cash' && (
             <input
               type="text"
               placeholder="Your name (for order pickup)"
               value={guestName}
               onChange={(e) => setGuestName(e.target.value)}
-              className="w-full p-3 border rounded mt-4 text-lg"
+              className="w-full p-3 border rounded-kiosk mt-4 text-lg focus:outline-none focus:ring-2 focus:ring-school-500"
             />
           )}
 

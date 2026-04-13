@@ -84,7 +84,6 @@ export function KioskMenu() {
         });
       }
       setSelectedOptions(defaults);
-      // ✅ 7. Initialize current price
       setCurrentPrice(normalized.price);
     } catch (err) {
       toast.error('Could not load item details');
@@ -93,7 +92,7 @@ export function KioskMenu() {
     }
   };
 
-  // ✅ 7. Recalculate price when options change
+  // Recalculate price when options change
   useEffect(() => {
     if (!selectedItem) return;
     let modifierSum = 0;
@@ -123,6 +122,8 @@ export function KioskMenu() {
     toast.success(`${selectedItem.name} added to cart!`);
     setSelectedItem(null);
     setSelectedOptions({});
+    // Confetti after adding from dialog
+    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
   };
 
   const handleAddClick = async (item: MenuItem) => {
@@ -135,7 +136,6 @@ export function KioskMenu() {
       } else {
         addItem(normalized, {});
         toast.success(`${normalized.name} added to cart!`);
-        // ✅ 3. Confetti on add to cart
         confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
       }
     } catch (err) {
@@ -145,10 +145,10 @@ export function KioskMenu() {
     }
   };
 
-  if (loading) return <div className="text-center text-xl">Loading menu items...</div>;
+  if (loading) return <div className="text-center text-xl py-16">Loading menu items...</div>;
   if (error) {
     return (
-      <div className="text-center">
+      <div className="text-center py-16">
         <p className="text-red-600">Error: {error}</p>
         <button onClick={fetchItems} className="kiosk-btn mt-4 px-6 py-2">Retry</button>
       </div>
@@ -157,7 +157,7 @@ export function KioskMenu() {
 
   if (items.length === 0) {
     return (
-      <div className="text-center">
+      <div className="text-center py-16">
         <div className="text-6xl mb-4">🍽️</div>
         <h2 className="text-3xl font-bold">No items in this category</h2>
         <button onClick={() => navigate('/kiosk/categories')} className="kiosk-btn mt-6 px-6 py-3">
@@ -170,12 +170,12 @@ export function KioskMenu() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <button onClick={() => navigate('/kiosk/categories')} className="kiosk-btn bg-white px-5 py-2">
+        <button onClick={() => navigate('/kiosk/categories')} className="kiosk-btn bg-white px-6 py-2">
           ← Back to Categories
         </button>
         <div className="flex items-center gap-3">
           <span className="text-lg font-bold">Cart: {getCartCount()}</span>
-          <button onClick={() => navigate('/kiosk/cart')} className="kiosk-btn bg-white px-5 py-2">
+          <button onClick={() => navigate('/kiosk/cart')} className="kiosk-btn bg-white px-6 py-2">
             🛒 View Cart
           </button>
         </div>
@@ -197,7 +197,7 @@ export function KioskMenu() {
               )}
             </div>
             <div className="mt-4">
-              <h3 className="text-2xl font-extrabold">{item.name}</h3>
+              <h3 className="text-2xl font-extrabold text-school-800">{item.name}</h3>
               <p className="kiosk-subtle mt-1">{item.description || 'Delicious fresh item'}</p>
               <div className="flex justify-between items-center mt-4">
                 <span className="text-2xl font-black">${item.price.toFixed(2)}</span>
@@ -216,22 +216,21 @@ export function KioskMenu() {
 
       {/* Options Dialog */}
       <Dialog open={!!selectedItem} onOpenChange={() => setSelectedItem(null)}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md rounded-kiosk">
           {loadingItem ? (
             <div className="flex flex-col items-center py-8">
-              <Loader2 className="w-8 h-8 animate-spin" />
+              <Loader2 className="w-8 h-8 animate-spin text-school-800" />
               <p className="mt-4">Loading options...</p>
             </div>
           ) : selectedItem && (
             <>
               <DialogHeader>
-                <DialogTitle>{selectedItem.name}</DialogTitle>
+                <DialogTitle className="text-2xl font-black text-school-800">{selectedItem.name}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <img src={selectedItem.image} alt={selectedItem.name} className="rounded-lg w-full h-40 object-cover" />
                 <p>{selectedItem.description}</p>
-                {/* ✅ 7. Display updated price */}
-                <div className="font-bold text-xl">${currentPrice.toFixed(2)}</div>
+                <div className="font-bold text-xl text-school-800">${currentPrice.toFixed(2)}</div>
                 {selectedItem.options?.map((opt) => (
                   <div key={opt.id}>
                     <Label className="font-bold">{opt.name}</Label>
@@ -253,7 +252,7 @@ export function KioskMenu() {
                     </RadioGroup>
                   </div>
                 ))}
-                <Button onClick={handleAddToCart} className="w-full bg-orange-500 hover:bg-orange-600">
+                <Button onClick={handleAddToCart} className="w-full kiosk-btn kiosk-primary text-lg py-3">
                   Add to Cart
                 </Button>
               </div>

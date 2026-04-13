@@ -1,3 +1,4 @@
+/* index.css - Complete overhaul with new color scheme and category card styling */
 @import './fonts.css';
 @import './tailwind.css';
 @import './theme.css';
@@ -11,6 +12,42 @@
   --kiosk-shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
   --kiosk-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   --bottom-nav-height: 70px;
+
+  /* New simpler color scheme - warm & modern */
+  --primary-50: #F0F9F4;
+  --primary-100: #DBF0E5;
+  --primary-200: #B7E1CD;
+  --primary-300: #8ED2B1;
+  --primary-400: #65C395;
+  --primary-500: #3CB371; /* Main primary color - seagreen */
+  --primary-600: #2E8B57;
+  --primary-700: #236B43;
+  --primary-800: #1A4F32;
+  --primary-900: #113822;
+
+  --accent-50: #FFF8EB;
+  --accent-100: #FFEEC9;
+  --accent-200: #FFDD94;
+  --accent-300: #FFCC5E;
+  --accent-400: #FFBB28;
+  --accent-500: #F4A261; /* Accent - warm orange */
+  --accent-600: #E76F51;
+  
+  --neutral-50: #FCFCFA;
+  --neutral-100: #F8F9F7;
+  --neutral-200: #E9ECEA;
+  --neutral-300: #D1D5D4;
+  --neutral-400: #9CA3A2;
+  --neutral-500: #6B7280;
+  --neutral-600: #4B5563;
+  --neutral-700: #374151;
+  --neutral-800: #1F2937;
+  --neutral-900: #111827;
+
+  --surface-white: #FFFFFF;
+  --surface-gray: #F9FAFB;
+  --surface-card: #FFFFFF;
+  --border-light: #EDF2F7;
 }
 
 html, body, #root {
@@ -19,8 +56,8 @@ html, body, #root {
 
 body {
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  background: #f5f7fb;
-  color: #1e293b;
+  background: var(--neutral-100);
+  color: var(--neutral-800);
 }
 
 /* Kiosk shell */
@@ -28,36 +65,36 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: #f5f7fb;
+  background: var(--neutral-100);
 }
 
-/* Header */
+/* Header - cleaner, no shadow, light border */
 .kiosk-header {
   padding: 0.75rem 1.5rem;
-  background: white;
-  border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  background: var(--surface-white);
+  border-bottom: 1px solid var(--border-light);
 }
 
-/* Main content – fills remaining space, scrollable */
+/* Main content */
 .kiosk-main {
   flex: 1;
   overflow-y: auto;
   padding: 1rem 1.5rem 1.5rem;
 }
 
-/* Bottom Navigation */
+/* Bottom Navigation - fresh, minimal */
 .kiosk-bottom-nav {
   position: sticky;
   bottom: 0;
-  background: white;
-  border-top: 1px solid #e2e8f0;
+  background: var(--surface-white);
+  border-top: 1px solid var(--border-light);
   display: flex;
   justify-content: space-around;
   align-items: center;
   padding: 0.5rem 1rem;
   height: var(--bottom-nav-height);
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.96);
 }
 
 .kiosk-nav-btn {
@@ -69,8 +106,8 @@ body {
   border: none;
   font-size: 0.75rem;
   font-weight: 500;
-  color: #64748b;
-  transition: all 0.2s;
+  color: var(--neutral-500);
+  transition: all 0.2s ease;
   cursor: pointer;
   padding: 0.5rem;
   border-radius: 40px;
@@ -79,12 +116,14 @@ body {
 }
 
 .kiosk-nav-btn.active {
-  color: #0f338f;
-  background: #eef2ff;
+  color: var(--primary-600);
+  background: var(--primary-50);
+  transform: translateY(-2px);
 }
 
 .kiosk-nav-btn span {
   font-size: 0.7rem;
+  font-weight: 500;
 }
 
 .cart-btn {
@@ -95,7 +134,7 @@ body {
   position: absolute;
   top: -4px;
   right: 12px;
-  background: #f97316;
+  background: var(--accent-500);
   color: white;
   font-size: 0.7rem;
   font-weight: bold;
@@ -105,13 +144,16 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* Cart Drawer – bottom sheet style on mobile, side panel on desktop */
+/* Cart Drawer */
 .kiosk-cart-drawer {
   max-height: 80vh;
   overflow-y: auto;
   animation: slideUp 0.3s ease-out;
+  background: var(--surface-white);
+  border-radius: 32px 32px 0 0;
 }
 
 @media (min-width: 768px) {
@@ -119,6 +161,7 @@ body {
     max-height: 100vh;
     height: 100%;
     animation: slideInRight 0.3s ease-out;
+    border-radius: 32px 0 0 32px;
   }
 }
 
@@ -132,52 +175,194 @@ body {
   to { transform: translateX(0); }
 }
 
-/* Reusable kiosk components */
+/* Reusable buttons - all functional with improved hover */
 .kiosk-btn {
   border-radius: 60px;
-  padding: 0.5rem 1.25rem;
+  padding: 0.6rem 1.5rem;
   font-weight: 600;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   cursor: pointer;
   border: none;
+  font-size: 1rem;
+  background: transparent;
 }
+
 .kiosk-btn:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
 }
 
 .kiosk-primary {
-  background: #0f338f;
+  background: var(--primary-500);
   color: white;
-  box-shadow: 0 2px 6px rgba(15, 51, 143, 0.3);
+  box-shadow: 0 2px 8px rgba(60, 179, 113, 0.25);
 }
 
-.kiosk-panel {
+.kiosk-primary:hover {
+  background: var(--primary-600);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(60, 179, 113, 0.3);
+}
+
+.kiosk-secondary {
+  background: var(--accent-500);
+  color: white;
+}
+
+.kiosk-secondary:hover {
+  background: var(--accent-600);
+  transform: translateY(-1px);
+}
+
+.kiosk-outline {
   background: white;
+  border: 2px solid var(--primary-500);
+  color: var(--primary-600);
+}
+
+.kiosk-outline:hover {
+  background: var(--primary-50);
+  border-color: var(--primary-600);
+}
+
+/* Panels & Cards */
+.kiosk-panel {
+  background: var(--surface-card);
   border-radius: 24px;
-  padding: 1rem;
-  box-shadow: var(--kiosk-shadow-sm);
-  border: 1px solid #e2e8f0;
+  padding: 1.25rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--border-light);
+  transition: all 0.2s ease;
 }
 
 .kiosk-title {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 800;
-  color: #0f338f;
+  color: var(--neutral-800);
+  letter-spacing: -0.01em;
 }
 
 .kiosk-subtle {
-  color: #64748b;
-  font-size: 0.85rem;
+  color: var(--neutral-500);
+  font-size: 0.9rem;
 }
 
+/* NEW CARD STYLING FOR CATEGORIES - Modern & inviting */
 .kiosk-tile {
-  background: white;
-  border-radius: 20px;
-  padding: 1rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  transition: transform 0.2s, box-shadow 0.2s;
+  background: var(--surface-white);
+  border-radius: 28px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+  transition: all 0.25s ease;
+  border: 1px solid var(--border-light);
+  cursor: pointer;
+  text-align: center;
+  backdrop-filter: blur(0px);
 }
+
 .kiosk-tile-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.12);
+  border-color: var(--primary-200);
+  background: white;
+}
+
+/* Specific category card styling used in KioskCategories */
+.category-card {
+  background: white;
+  border-radius: 32px;
+  padding: 2rem 1.5rem;
+  transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  border: 1px solid var(--border-light);
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.category-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 25px 35px -12px rgba(0, 0, 0, 0.15);
+  border-color: var(--primary-300);
+  background: linear-gradient(to bottom, white, var(--primary-50));
+}
+
+.category-emoji {
+  font-size: 3.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.category-name {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--neutral-800);
+  margin: 0;
+}
+
+.category-link {
+  color: var(--primary-500);
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.category-card:hover .category-link {
+  opacity: 1;
+  transform: translateX(4px);
+  display: inline-block;
+}
+
+/* Landing page special styling */
+.kiosk-hero {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.kiosk-fact-card {
+  background: white;
+  border-radius: 40px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-light);
+  transition: all 0.2s;
+}
+
+/* Additional utility overrides */
+.bg-ocean-50 { background-color: var(--primary-50); }
+.bg-ocean-100 { background-color: var(--primary-100); }
+.text-ocean-800 { color: var(--primary-800); }
+.border-ocean-600 { border-color: var(--primary-600); }
+.hover\:bg-ocean-50:hover { background-color: var(--primary-50); }
+.text-coral-500 { color: var(--accent-500); }
+.bg-coral-500 { background-color: var(--accent-500); }
+
+/* Ensure all buttons have proper cursor and interaction */
+button, .kiosk-btn, .kiosk-nav-btn, .category-card {
+  cursor: pointer;
+  user-select: none;
+}
+
+button:disabled, .kiosk-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Animation for cart and modals */
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.kiosk-panel, .category-card {
+  animation: fadeSlide 0.3s ease-out;
 }

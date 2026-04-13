@@ -18,17 +18,23 @@ class Database {
     public function getConnection() {
         $this->conn = null;
         try {
-            // DSN with SSL options for Aiven
             $dsn = "mysql:host={$this->host};port={$this->port};dbname={$this->db_name};charset=utf8mb4";
-            
-            // SSL options (required for Aiven)
             $options = [
-                PDO::MYSQL_ATTR_SSL_CA => __DIR__ . '/config/ca.pem',   // path to your CA cert
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
             ];
-            
+
+            // Try to add SSL if CA certificate exists
+            $caCertPath = __DIR__ . '/ca.pem';
+            if (file_exists($caCertPath)) {
+                $options[PDO::MYSQL_ATTR_SSL_CA] = $caCertPath;
+                // For Aiven, we often don't need to verify the server cert, but it's safer to set:
+                $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
+            } else {
+                error_log("Warning: CA certificate not found at $caCertPath. Connecting without SSL.");
+            }
+
             $this->conn = new PDO($dsn, $this->username, $this->password, $options);
         } catch(PDOException $exception) {
             http_response_code(500);

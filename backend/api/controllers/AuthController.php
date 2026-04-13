@@ -4,9 +4,7 @@ require_once __DIR__ . '/../utils/Response.php';
 require_once __DIR__ . '/../utils/Security.php';
 require_once __DIR__ . '/../models/User.php';
 
-define('GOOGLE_CLIENT_ID', '1048393763438-na9g6fkbulept3j1kqo34gb54im30fve.apps.googleusercontent.com');
-
-// Try to load Composer autoloader (Google Client) – with fallback
+// Load Composer autoloader for Google Client
 $composerAutoload = __DIR__ . '/../vendor/autoload.php';
 if (file_exists($composerAutoload)) {
     require_once $composerAutoload;
@@ -76,8 +74,11 @@ class AuthController {
             return;
         }
 
+        // Use environment variable for client ID (fallback to hardcoded for local)
+        $clientId = getenv('GOOGLE_CLIENT_ID') ?: '1048393763438-na9g6fkbulept3j1kqo34gb54im30fve.apps.googleusercontent.com';
+
         try {
-            $client = new Google\Client(['client_id' => GOOGLE_CLIENT_ID]);
+            $client = new Google\Client(['client_id' => $clientId]);
             $payload = $client->verifyIdToken($id_token);
 
             if (!$payload) {
@@ -100,13 +101,13 @@ class AuthController {
                     $counter++;
                 }
 
-                // Create new user – using 'balance' column (adjust if your column is 'wallet_balance')
+                // Create new user – adjust column names to match your table
                 $userId = $this->userModel->create([
                     'username' => $username,
                     'email' => $email,
                     'password' => password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT),
                     'role' => 'customer',
-                    'balance' => 0,      // use 'balance' or 'wallet_balance' based on your table
+                    'balance' => 0,
                     'is_active' => 1
                 ]);
                 if (!$userId) {

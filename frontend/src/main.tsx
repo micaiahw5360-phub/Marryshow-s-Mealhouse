@@ -12,26 +12,28 @@ import './index.css';
 
 console.log('main.tsx loaded');
 
-// Your Google Client ID
-const GOOGLE_CLIENT_ID = '1048393763438-na9g6fkbulept3j1kqo34gb54im30fve.apps.googleusercontent.com';
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
-// Initialize sound globally
+if (!GOOGLE_CLIENT_ID) {
+  console.error('Missing VITE_GOOGLE_CLIENT_ID environment variable');
+}
+
 initNotificationSound();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>           {/* ← Add this line */}
-        <KioskProvider>
-          <AuthProvider>
-            <CartProvider>
-              <FavoritesProvider>
-                <NotificationsProvider>
-                  <App />
-                </NotificationsProvider>
-              </FavoritesProvider>
-            </CartProvider>
-          </AuthProvider>
-        </KioskProvider>          {/* ← Close */}
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <KioskProvider>
+        <AuthProvider>
+          <CartProvider>
+            <FavoritesProvider>
+              <NotificationsProvider>
+                <App />
+              </NotificationsProvider>
+            </FavoritesProvider>
+          </CartProvider>
+        </AuthProvider>
+      </KioskProvider>
     </GoogleOAuthProvider>
   </React.StrictMode>
 );

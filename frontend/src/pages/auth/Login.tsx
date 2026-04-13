@@ -9,7 +9,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { toast } from '../../utils/toastWithSound';
 
 export function Login() {
-  const { login, user, setUser } = useAuth(); // setUser might be needed for Google login
+  const { login, user, setUser } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
@@ -52,7 +52,8 @@ export function Login() {
     }
 
     try {
-      const response = await fetch('/api/auth/google', {
+      const apiBase = import.meta.env.VITE_API_URL || '/api';
+      const response = await fetch(`${apiBase}/auth/google`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token }),

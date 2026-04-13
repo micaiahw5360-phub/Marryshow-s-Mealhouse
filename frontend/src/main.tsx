@@ -9,7 +9,6 @@ import { FavoritesProvider } from './contexts/FavoritesContext';
 import { NotificationsProvider } from './contexts/NotificationsContext';
 import { initNotificationSound } from './utils/sound';
 import './index.css';
-import { ThemeProvider } from './contexts/ThemeContext';
 
 console.log('main.tsx loaded');
 
@@ -21,8 +20,7 @@ initNotificationSound();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-      <ThemeProvider>              {/* ← Add this line */}
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>           {/* ← Add this line */}
         <KioskProvider>
           <AuthProvider>
             <CartProvider>
@@ -33,8 +31,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               </FavoritesProvider>
             </CartProvider>
           </AuthProvider>
-        </KioskProvider>
-      </ThemeProvider>              {/* ← Close */}
+        </KioskProvider>          {/* ← Close */}
     </GoogleOAuthProvider>
   </React.StrictMode>
 );

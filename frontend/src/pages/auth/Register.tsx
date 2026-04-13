@@ -4,11 +4,9 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
-import { useAuth } from '../../contexts/AuthContext';
 import { toast } from '../../utils/toastWithSound';
 
 export function Register() {
-  const { register: registerUser, user } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
@@ -21,14 +19,9 @@ export function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  React.useEffect(() => {
-    if (user) {
-      navigate('/');
-    }
-  }, [user, navigate]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match');
       return;
@@ -41,17 +34,32 @@ export function Register() {
       toast.error('Password must be at least 6 characters');
       return;
     }
+
     setLoading(true);
+
     try {
-      const success = await registerUser(formData.username, formData.email, formData.password);
-      if (success) {
-        toast.success('Account created successfully!');
-        navigate('/');
+      const apiBase = import.meta.env.VITE_API_URL || '/api';
+      const response = await fetch(`${apiBase}/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success('Account created successfully! Please log in.');
+        navigate('/login');
       } else {
-        toast.error('Registration failed. Please try again.');
+        toast.error(data.error || 'Registration failed. Please try again.');
       }
     } catch (error) {
-      toast.error('An error occurred during registration');
+      console.error('Registration error:', error);
+      toast.error('Could not connect to server. Please try again later.');
     } finally {
       setLoading(false);
     }

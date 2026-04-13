@@ -37,8 +37,10 @@ export function Register() {
 
     setLoading(true);
 
+    // Use environment variable on Render, fallback to hardcoded backend URL
+    const apiBase = import.meta.env.VITE_API_URL || 'https://marryshows-mealhouse.onrender.com';
+    
     try {
-      const apiBase = import.meta.env.VITE_API_URL || '/api';
       const response = await fetch(`${apiBase}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -55,11 +57,12 @@ export function Register() {
         toast.success('Account created successfully! Please log in.');
         navigate('/login');
       } else {
+        // Display the error message from the backend
         toast.error(data.error || 'Registration failed. Please try again.');
       }
     } catch (error) {
       console.error('Registration error:', error);
-      toast.error('Could not connect to server. Please try again later.');
+      toast.error('Network error. Please check your connection and try again.');
     } finally {
       setLoading(false);
     }

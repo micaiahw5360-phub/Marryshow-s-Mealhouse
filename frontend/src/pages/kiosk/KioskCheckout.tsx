@@ -107,8 +107,8 @@ export function KioskCheckout() {
   if (cartItems.length === 0) {
     return (
       <div className="text-center py-16">
-        <h2 className="text-3xl font-bold">Cart is empty</h2>
-        <button onClick={() => navigate('/kiosk/categories')} className="kiosk-btn mt-6 px-6 py-3">
+        <h2 className="text-3xl font-bold text-ocean-800">Cart is empty</h2>
+        <button onClick={() => navigate('/kiosk/categories')} className="kiosk-btn kiosk-primary mt-6 px-6 py-3">
           Browse Menu
         </button>
       </div>
@@ -117,15 +117,14 @@ export function KioskCheckout() {
 
   return (
     <div>
-      <button onClick={() => navigate('/kiosk/cart')} className="kiosk-btn bg-white px-6 py-2 mb-6">
+      <button onClick={() => navigate('/kiosk/cart')} className="kiosk-btn bg-white px-6 py-2 mb-6 shadow-sm">
         ← Back to Cart
       </button>
       <h1 className="kiosk-title text-4xl mb-6">Checkout</h1>
 
       <div className="grid md:grid-cols-2 gap-8">
-        {/* Order Summary */}
         <div className="kiosk-panel p-6">
-          <h2 className="text-2xl font-bold text-school-800 mb-4">Order Summary</h2>
+          <h2 className="text-2xl font-bold text-ocean-800 mb-4">Order Summary</h2>
           <div className="space-y-2">
             {cartItems.map((item) => (
               <div key={item.id} className="flex justify-between">
@@ -134,7 +133,7 @@ export function KioskCheckout() {
               </div>
             ))}
           </div>
-          <div className="border-t border-kiosk-line mt-4 pt-4">
+          <div className="border-t border-sand-200 mt-4 pt-4">
             <div className="flex justify-between text-xl font-black">
               <span>Total</span>
               <span>${total.toFixed(2)}</span>
@@ -142,9 +141,8 @@ export function KioskCheckout() {
           </div>
         </div>
 
-        {/* Payment Method */}
         <div className="kiosk-panel p-6">
-          <h2 className="text-2xl font-bold text-school-800 mb-4">Payment Method</h2>
+          <h2 className="text-2xl font-bold text-ocean-800 mb-4">Payment Method</h2>
           <div className="space-y-4">
             {identifiedUser && (
               <label className="flex items-center gap-3 p-3 border rounded-kiosk cursor-pointer">
@@ -159,7 +157,7 @@ export function KioskCheckout() {
                 <span className="flex-1">
                   Wallet Balance (Available: ${walletBalance.toFixed(2)})
                 </span>
-                {!isWalletSufficient && <span className="text-red-600">⚠️ Insufficient</span>}
+                {!isWalletSufficient && <span className="text-coral-500">⚠️ Insufficient</span>}
               </label>
             )}
             <label className="flex items-center gap-3 p-3 border rounded-kiosk cursor-pointer">
@@ -181,7 +179,7 @@ export function KioskCheckout() {
               placeholder="Your name (for order pickup)"
               value={guestName}
               onChange={(e) => setGuestName(e.target.value)}
-              className="w-full p-3 border rounded-kiosk mt-4 text-lg focus:outline-none focus:ring-2 focus:ring-school-500"
+              className="w-full p-3 border rounded-kiosk mt-4 text-lg focus:outline-none focus:ring-2 focus:ring-ocean-400"
             />
           )}
 

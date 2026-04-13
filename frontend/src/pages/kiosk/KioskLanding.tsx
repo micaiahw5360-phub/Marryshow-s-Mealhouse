@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router';
 export function KioskLanding() {
   const navigate = useNavigate();
 
-  // ✅ 2. Greeting based on time of day
   const hour = new Date().getHours();
   const greetings = {
     morning: "🌅 Good Morning! Ready for Breakfast?",
@@ -29,24 +28,23 @@ export function KioskLanding() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] text-center">
-      <div className="mb-6 inline-flex items-center gap-2 bg-school-100 text-school-800 px-4 py-2 rounded-full text-sm font-bold">
-        <span className="w-2 h-2 bg-school-600 rounded-full animate-pulse"></span>
+      <div className="mb-6 inline-flex items-center gap-2 bg-ocean-100 text-ocean-800 px-4 py-2 rounded-full text-sm font-bold">
+        <span className="w-2 h-2 bg-ocean-600 rounded-full animate-pulse"></span>
         OPEN FOR ORDERS
       </div>
-      <h1 className="text-6xl font-black tracking-tight">
-        Deli<span className="text-school-600">Kiosk</span>
+      <h1 className="text-6xl font-black tracking-tight bg-gradient-to-r from-ocean-800 to-ocean-500 bg-clip-text text-transparent">
+        Deli<span className="text-ocean-600">Kiosk</span>
       </h1>
-      <p className="text-xl text-kiosk-muted mt-4 max-w-md">
+      <p className="text-xl text-ocean-600 mt-4 max-w-md">
         Touch, customize, collect – your perfect meal is moments away.
       </p>
 
-      {/* Greeting + fun fact card */}
-      <div className="mt-8 bg-school-50 rounded-2xl p-6 max-w-lg w-full shadow-md">
-        <div className="text-2xl font-bold text-school-800">{greeting}</div>
-        <div className="mt-2 text-lg text-school-700">{randomFact}</div>
+      <div className="mt-8 bg-white rounded-2xl p-7 max-w-lg w-full shadow-lg border border-sand-200 transition-all hover:shadow-xl animate-float">
+        <div className="text-2xl font-bold text-ocean-800">{greeting}</div>
+        <div className="mt-3 text-lg text-ocean-700 bg-ocean-50 p-3 rounded-2xl">{randomFact}</div>
       </div>
 
-      <div className="flex gap-4 mt-8">
+      <div className="flex gap-5 mt-8">
         <button
           onClick={() => navigate('/kiosk/categories')}
           className="kiosk-btn kiosk-primary px-8 py-5 text-2xl font-black"
@@ -55,7 +53,7 @@ export function KioskLanding() {
         </button>
         <button
           onClick={() => navigate('/kiosk/categories')}
-          className="kiosk-btn bg-white px-8 py-5 text-2xl font-black border-2 border-school-800 text-school-800"
+          className="kiosk-btn bg-white px-8 py-5 text-2xl font-black border-2 border-ocean-600 text-ocean-800 hover:bg-ocean-50"
         >
           View Menu
         </button>
@@ -79,14 +77,14 @@ export function KioskLanding() {
         </div>
       </div>
 
-      <div className="mt-20 bg-school-50 rounded-kiosk p-8 text-center max-w-2xl">
-        <h2 className="text-3xl font-black">Hungry?</h2>
+      <div className="mt-20 bg-gradient-to-br from-ocean-50 to-white rounded-3xl p-9 text-center max-w-2xl border border-ocean-100 shadow-md">
+        <h2 className="text-3xl font-black text-ocean-800">Hungry? 😋</h2>
         <p className="text-lg mt-2">Tap the button below and build your meal.</p>
         <button
           onClick={() => navigate('/kiosk/categories')}
           className="kiosk-btn kiosk-primary mt-6 px-8 py-4 text-xl font-black"
         >
-          Order Now
+          Order Now 🚀
         </button>
       </div>
     </div>

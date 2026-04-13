@@ -34,10 +34,10 @@ export function KioskCategories() {
     fetchCategories();
   }, []);
 
-  if (loading) return <div className="text-center text-xl">Loading categories...</div>;
+  if (loading) return <div className="text-center text-xl py-16">Loading categories...</div>;
   if (error) {
     return (
-      <div className="text-center">
+      <div className="text-center py-16">
         <p className="text-red-600">Error: {error}</p>
         <button onClick={fetchCategories} className="kiosk-btn mt-4 px-6 py-2">Retry</button>
       </div>
@@ -57,19 +57,14 @@ export function KioskCategories() {
             <button
               key={category}
               onClick={() => navigate(`/kiosk/menu/${encodeURIComponent(category)}`)}
-              className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all hover:-translate-y-1 border-2 border-transparent hover:border-school-600 text-left w-full"
+              className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all hover:-translate-y-1 border-2 border-transparent hover:border-ocean-400 text-left w-full"
             >
               <div className="text-5xl mb-2">{emoji}</div>
-              <h2 className="text-2xl font-extrabold text-school-800">{category}</h2>
-              <p className="text-gray-500 mt-1">Browse →</p>
+              <h2 className="text-2xl font-extrabold text-ocean-800">{category}</h2>
+              <p className="text-ocean-600 mt-1">Browse →</p>
             </button>
           );
         })}
-      </div>
-      <div className="mt-8">
-        <button onClick={() => navigate('/kiosk')} className="kiosk-btn bg-white px-6 py-3">
-          ← Back to Home
-        </button>
       </div>
     </div>
   );

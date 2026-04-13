@@ -58,7 +58,7 @@ export function KioskGetUser() {
 
   return (
     <div className="max-w-md mx-auto">
-      <button onClick={() => navigate('/kiosk/cart')} className="kiosk-btn bg-white px-6 py-2 mb-6">
+      <button onClick={() => navigate('/kiosk/cart')} className="kiosk-btn bg-white px-6 py-2 mb-6 shadow-sm">
         ← Back to Cart
       </button>
 
@@ -77,9 +77,9 @@ export function KioskGetUser() {
               placeholder="your@email.com"
               autoFocus
               disabled={loading}
-              className="w-full p-4 border border-kiosk-line rounded-kiosk text-lg focus:outline-none focus:ring-2 focus:ring-school-500"
+              className="w-full p-4 border border-sand-200 rounded-kiosk text-lg focus:outline-none focus:ring-2 focus:ring-ocean-400"
             />
-            {error && <p className="text-red-600 mt-2">⚠️ {error}</p>}
+            {error && <p className="text-coral-500 mt-2">⚠️ {error}</p>}
           </div>
 
           <div className="flex flex-col gap-3">
@@ -93,7 +93,7 @@ export function KioskGetUser() {
             <button
               type="button"
               onClick={handleSkip}
-              className="kiosk-btn bg-white w-full py-4 text-xl border-2 border-school-800"
+              className="kiosk-btn bg-white w-full py-4 text-xl border-2 border-ocean-600 text-ocean-700"
             >
               Continue as Guest
             </button>

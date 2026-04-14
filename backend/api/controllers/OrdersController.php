@@ -179,6 +179,15 @@ class OrdersController {
                     'type' => 'payment',
                     'description' => "Order payment #$orderId"
                 ]);
+
+                // ✅ NEW: Wallet payment notification
+                $this->notificationModel->create([
+                    'user_id' => $userId,
+                    'type' => 'wallet',
+                    'title' => 'Payment Made',
+                    'message' => 'You paid $' . number_format($total, 2) . ' using your wallet for order #' . $orderId,
+                    'action_url' => '/orders/' . $orderId
+                ]);
             }
 
             // Only create notification if user is logged in

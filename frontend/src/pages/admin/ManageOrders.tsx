@@ -48,11 +48,12 @@ export function ManageOrders() {
     loadOrders();
   }, []);
 
+  // ✅ Updated status colors to match backend values: processing, prepared, cancelled
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'preparing': return 'bg-blue-100 text-blue-800';
-      case 'ready': return 'bg-green-100 text-green-800';
+      case 'processing': return 'bg-blue-100 text-blue-800';
+      case 'prepared': return 'bg-green-100 text-green-800';
       case 'completed': return 'bg-gray-100 text-gray-800';
       case 'cancelled': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
@@ -73,11 +74,12 @@ export function ManageOrders() {
     ? orders
     : orders.filter(order => order.status === filterStatus);
 
+  // ✅ Updated stats with processing, prepared, cancelled
   const stats = {
     total: orders.length,
     pending: orders.filter(o => o.status === 'pending').length,
-    preparing: orders.filter(o => o.status === 'preparing').length,
-    ready: orders.filter(o => o.status === 'ready').length,
+    processing: orders.filter(o => o.status === 'processing').length,
+    prepared: orders.filter(o => o.status === 'prepared').length,
     completed: orders.filter(o => o.status === 'completed').length,
     cancelled: orders.filter(o => o.status === 'cancelled').length,
   };
@@ -91,17 +93,16 @@ export function ManageOrders() {
         <p className="text-gray-600 mt-1">View and Update Order Statuses</p>
       </div>
 
-      {/* Stats – added cancelled */}
+      {/* ✅ Stats cards with correct labels */}
       <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
         <Card><CardContent className="pt-6"><p className="text-sm text-gray-600">Total</p><p className="text-2xl font-bold mt-1">{stats.total}</p></CardContent></Card>
         <Card><CardContent className="pt-6"><p className="text-sm text-gray-600">Pending</p><p className="text-2xl font-bold mt-1 text-yellow-600">{stats.pending}</p></CardContent></Card>
-        <Card><CardContent className="pt-6"><p className="text-sm text-gray-600">Preparing</p><p className="text-2xl font-bold mt-1 text-blue-600">{stats.preparing}</p></CardContent></Card>
-        <Card><CardContent className="pt-6"><p className="text-sm text-gray-600">Ready</p><p className="text-2xl font-bold mt-1 text-green-600">{stats.ready}</p></CardContent></Card>
+        <Card><CardContent className="pt-6"><p className="text-sm text-gray-600">Processing</p><p className="text-2xl font-bold mt-1 text-blue-600">{stats.processing}</p></CardContent></Card>
+        <Card><CardContent className="pt-6"><p className="text-sm text-gray-600">Ready for Pickup</p><p className="text-2xl font-bold mt-1 text-green-600">{stats.prepared}</p></CardContent></Card>
         <Card><CardContent className="pt-6"><p className="text-sm text-gray-600">Completed</p><p className="text-2xl font-bold mt-1 text-gray-600">{stats.completed}</p></CardContent></Card>
         <Card><CardContent className="pt-6"><p className="text-sm text-gray-600">Cancelled</p><p className="text-2xl font-bold mt-1 text-red-600">{stats.cancelled}</p></CardContent></Card>
       </div>
 
-      {/* Orders Table */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -113,8 +114,8 @@ export function ManageOrders() {
                 <SelectContent>
                   <SelectItem value="all">All Orders</SelectItem>
                   <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="preparing">Preparing</SelectItem>
-                  <SelectItem value="ready">Ready</SelectItem>
+                  <SelectItem value="processing">Processing</SelectItem>
+                  <SelectItem value="prepared">Ready for Pickup</SelectItem>
                   <SelectItem value="completed">Completed</SelectItem>
                   <SelectItem value="cancelled">Cancelled</SelectItem>
                 </SelectContent>
@@ -160,8 +161,8 @@ export function ManageOrders() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="pending">Pending</SelectItem>
-                          <SelectItem value="preparing">Preparing</SelectItem>
-                          <SelectItem value="ready">Ready</SelectItem>
+                          <SelectItem value="processing">Processing</SelectItem>
+                          <SelectItem value="prepared">Ready for Pickup</SelectItem>
                           <SelectItem value="completed">Completed</SelectItem>
                           <SelectItem value="cancelled">Cancelled</SelectItem>
                         </SelectContent>

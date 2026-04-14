@@ -4,7 +4,7 @@ import { Card, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { Bell, Package, Tag, Gift, AlertCircle, CheckCircle, Trash2 } from 'lucide-react';
+import { Bell, Package, Tag, Gift, AlertCircle, CheckCircle, Trash2, Wallet } from 'lucide-react';
 import { useNotifications } from '../contexts/NotificationsContext';
 
 export function Notifications() {
@@ -17,6 +17,7 @@ export function Notifications() {
     return true;
   });
 
+  // ✅ Added 'wallet' type
   const getIcon = (type: string) => {
     switch (type) {
       case 'order':
@@ -27,11 +28,14 @@ export function Notifications() {
         return <Gift className="h-5 w-5" />;
       case 'system':
         return <AlertCircle className="h-5 w-5" />;
+      case 'wallet':
+        return <Wallet className="h-5 w-5" />;
       default:
         return <Bell className="h-5 w-5" />;
     }
   };
 
+  // ✅ Added emerald color for 'wallet'
   const getIconColor = (type: string) => {
     switch (type) {
       case 'order':
@@ -42,6 +46,8 @@ export function Notifications() {
         return 'text-green-600 bg-green-100';
       case 'system':
         return 'text-purple-600 bg-purple-100';
+      case 'wallet':
+        return 'text-emerald-600 bg-emerald-100';
       default:
         return 'text-gray-600 bg-gray-100';
     }

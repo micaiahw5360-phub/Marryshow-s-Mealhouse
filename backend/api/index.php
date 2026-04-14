@@ -106,19 +106,27 @@ switch ($path[0]) {
         }
         break;
     case 'wallet':
-        $controller = new WalletController();
-        if ($requestMethod === 'GET') {
-            if (isset($path[1]) && $path[1] === 'transactions') {
-                $controller->getTransactions();
-            } else {
-                $controller->get();
-            }
-        } elseif ($requestMethod === 'POST' && isset($path[1]) && $path[1] === 'topup') {
+    $controller = new WalletController();
+    if ($requestMethod === 'GET') {
+        if (isset($path[1]) && $path[1] === 'transactions') {
+            $controller->getTransactions();
+        } elseif (isset($path[1]) && $path[1] === 'summary') {
+            $controller->getSummary();          // NEW: spending summary
+        } else {
+            $controller->get();                 // GET /wallet
+        }
+    } elseif ($requestMethod === 'POST') {
+        if (isset($path[1]) && $path[1] === 'topup') {
             $controller->topUp();
+        } elseif (isset($path[1]) && $path[1] === 'transfer') {
+            $controller->transfer();            // NEW: P2P transfer
         } else {
             Response::send(405, ['error' => 'Method not allowed']);
         }
-        break;
+    } else {
+        Response::send(405, ['error' => 'Method not allowed']);
+    }
+    break;
     case 'favorites':
         $controller = new FavoritesController();
         if ($requestMethod === 'GET') {

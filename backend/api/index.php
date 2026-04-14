@@ -106,27 +106,37 @@ switch ($path[0]) {
         }
         break;
     case 'wallet':
-    $controller = new WalletController();
-    if ($requestMethod === 'GET') {
-        if (isset($path[1]) && $path[1] === 'transactions') {
-            $controller->getTransactions();
-        } elseif (isset($path[1]) && $path[1] === 'summary') {
-            $controller->getSummary();          // NEW: spending summary
-        } else {
-            $controller->get();                 // GET /wallet
-        }
-    } elseif ($requestMethod === 'POST') {
-        if (isset($path[1]) && $path[1] === 'topup') {
-            $controller->topUp();
-        } elseif (isset($path[1]) && $path[1] === 'transfer') {
-            $controller->transfer();            // NEW: P2P transfer
+        $controller = new WalletController();
+        if ($requestMethod === 'GET') {
+            if (isset($path[1]) && $path[1] === 'transactions') {
+                $controller->getTransactions();
+            } elseif (isset($path[1]) && $path[1] === 'summary') {
+                $controller->getSummary();
+            } elseif (isset($path[1]) && $path[1] === 'requests' && isset($path[2]) && $path[2] === 'pending') {
+                $controller->getPendingRequests();
+            } else {
+                $controller->get();
+            }
+        } elseif ($requestMethod === 'POST') {
+            if (isset($path[1]) && $path[1] === 'topup') {
+                $controller->topUp();
+            } elseif (isset($path[1]) && $path[1] === 'transfer') {
+                $controller->transfer();
+            } elseif (isset($path[1]) && $path[1] === 'pay') {
+                $controller->pay();
+            } elseif (isset($path[1]) && $path[1] === 'request') {
+                $controller->requestMoney();
+            } elseif (isset($path[1]) && $path[1] === 'requests' && isset($path[2]) && $path[2] === 'accept') {
+                $controller->acceptRequest($path[3] ?? null);
+            } elseif (isset($path[1]) && $path[1] === 'requests' && isset($path[2]) && $path[2] === 'reject') {
+                $controller->rejectRequest($path[3] ?? null);
+            } else {
+                Response::send(405, ['error' => 'Method not allowed']);
+            }
         } else {
             Response::send(405, ['error' => 'Method not allowed']);
         }
-    } else {
-        Response::send(405, ['error' => 'Method not allowed']);
-    }
-    break;
+        break;
     case 'favorites':
         $controller = new FavoritesController();
         if ($requestMethod === 'GET') {
@@ -210,7 +220,6 @@ switch ($path[0]) {
             if ($resource === 'orders' && $subResource === 'status') {
                 $adminController->updateOrderStatus($id);
             } elseif ($resource === 'users' && $id) {
-                // NEW: if subResource is 'password', update password; else update user info
                 if ($subResource === 'password') {
                     $adminController->updateUserPassword($id);
                 } else {
@@ -230,7 +239,7 @@ switch ($path[0]) {
                 $adminController->deleteItem($id);
             } elseif ($resource === 'options' && $id) {
                 $adminController->deleteOption($id);
-            } elseif ($resource === 'users' && $id) {   // NEW: delete user
+            } elseif ($resource === 'users' && $id) {
                 $adminController->deleteUser($id);
             } else {
                 Response::send(404, ['error' => 'Admin DELETE endpoint not found']);
@@ -253,7 +262,6 @@ switch ($path[0]) {
             Response::send(404, ['error' => 'Staff endpoint not found']);
         }
     } elseif ($requestMethod === 'PUT') {
-        // Expect pattern: staff/orders/{id}/status
         if (isset($path[1]) && $path[1] === 'orders' && isset($path[3]) && $path[3] === 'status') {
             $staffController->updateOrderStatus((int)$path[2]);
         } else {

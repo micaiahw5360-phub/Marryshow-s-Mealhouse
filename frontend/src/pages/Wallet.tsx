@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { Wallet as WalletIcon, Plus, ArrowLeft, CreditCard, Send, Download, Utensils, PlusCircle, Receipt, Bell, ScanLine, TrendingUp, TrendingDown, Settings, ArrowRightLeft } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -100,6 +100,12 @@ export function Wallet() {
   const [isRequestMode, setIsRequestMode] = useState(false);
   const [transferLoading, setTransferLoading] = useState(false);
   const [payLoading, setPayLoading] = useState(false);
+
+  // Card animation refs
+  const cardRef = useRef<HTMLDivElement>(null);
+  const rippleRef = useRef<HTMLDivElement>(null);
+  const scanRef = useRef<HTMLDivElement>(null);
+  const [cardStatus, setCardStatus] = useState('Ready to pay');
 
   // Load wallet data
   const loadData = async () => {
@@ -365,6 +371,39 @@ export function Wallet() {
     setActiveModal('sendreceive');
   };
 
+  // NFC Card Tap Animation
+  const handleCardTap = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const card = cardRef.current;
+    const ripple = rippleRef.current;
+    const scan = scanRef.current;
+    if (!card || !ripple || !scan) return;
+
+    // Add multiple simultaneous animations
+    card.classList.add('tap-feedback', 'nfc-tap', 'card-glow');
+    ripple.style.display = 'block';
+    ripple.classList.add('nfc-ripple');
+    scan.style.display = 'block';
+    
+    setCardStatus('📱 Tap detected! Processing...');
+    
+    // Remove after delay
+    setTimeout(() => {
+      card.classList.remove('tap-feedback', 'nfc-tap');
+      card.classList.add('card-flip');
+    }, 400);
+    
+    setTimeout(() => {
+      card.classList.remove('card-flip', 'card-glow');
+      ripple.style.display = 'none';
+      ripple.classList.remove('nfc-ripple');
+      scan.style.display = 'none';
+      setCardStatus('Ready to pay');
+    }, 1200);
+    
+    toast.info('💳 NFC Payment Ready - Hold card near terminal', { duration: 2000 });
+  };
+
   // Filtered transactions for current tab
   const filteredTransactions = transactions.filter(tx => {
     if (currentTab === 'all') return true;
@@ -389,7 +428,7 @@ export function Wallet() {
               </div>
               <div>
                 <h1 className="text-gray-900 font-bold text-lg">Marryshow Card</h1>
-                <p className="text-gray-500 text-xs">Welcome back, {user.username}!</p>
+                <p className="text-gray-500 text-xs">{cardStatus}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -403,42 +442,68 @@ export function Wallet() {
           </div>
         </div>
 
-        {/* Main Card */}
-        <div className="mb-6">
-          <div className="card-main rounded-3xl p-6 relative overflow-hidden text-white" style={{ background: 'linear-gradient(135deg, #ff6b9d 0%, #c44569 50%, #f8b500 100%)', boxShadow: '0 20px 50px rgba(255, 107, 157, 0.3)' }}>
-            <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 400 240">
-              <circle cx="320" cy="60" r="120" fill="white" />
-              <circle cx="360" cy="100" r="80" fill="white" />
-            </svg>
-            <div className="relative z-10 flex flex-col justify-between h-full">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-white/60 text-[10px] tracking-widest uppercase font-semibold">Available Balance</p>
-                  <div className="flex items-baseline gap-1 mt-2">
-                    <span className="text-white/70 text-lg font-semibold">$</span>
-                    <span className="text-white text-4xl font-bold font-mono">{safeWalletBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <svg className="nfc-wave w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" opacity="0.7">
-                    <path d="M6 18.5a6 6 0 0 1 0-13" />
-                    <path d="M10 16a3.5 3.5 0 0 1 0-8" />
-                    <circle cx="14" cy="12" r="1" />
-                  </svg>
-                  <span className="text-white text-sm font-bold tracking-wider font-mono">VISA</span>
+        {/* Main Card - NFC Interactive */}
+        <div 
+          ref={cardRef}
+          className="card-main rounded-3xl p-6 relative overflow-hidden text-white mb-6 cursor-pointer transition-all"
+          style={{ 
+            background: 'linear-gradient(135deg, #ff6b9d 0%, #c44569 50%, #f8b500 100%)',
+            boxShadow: '0 20px 50px rgba(255, 107, 157, 0.3)',
+            aspectRatio: '1.7/1',
+            perspective: '1000px'
+          }}
+          onClick={handleCardTap}
+        >
+          {/* NFC Pulse Indicator */}
+          <div className="absolute top-6 right-6 w-3 h-3 rounded-full bg-white/60 nfc-pulse-indicator"></div>
+          
+          {/* Ripple Effect */}
+          <div 
+            ref={rippleRef}
+            className="nfc-ripple-effect absolute inset-0 pointer-events-none"
+            style={{ display: 'none', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 'inherit' }}
+          ></div>
+          
+          {/* NFC Scan Effect */}
+          <div 
+            ref={scanRef}
+            className="nfc-scan-effect absolute inset-0 pointer-events-none"
+            style={{ display: 'none' }}
+          ></div>
+          
+          <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 400 240">
+            <circle cx="320" cy="60" r="120" fill="white" />
+            <circle cx="360" cy="100" r="80" fill="white" />
+          </svg>
+          
+          <div className="relative z-10 flex flex-col justify-between h-full">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-white/60 text-[10px] tracking-widest uppercase font-semibold">Available Balance</p>
+                <div className="flex items-baseline gap-1 mt-2">
+                  <span className="text-white/70 text-lg font-semibold">$</span>
+                  <span className="text-white text-4xl font-bold font-mono">{safeWalletBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
                 </div>
               </div>
-              <div className="flex items-end justify-between mt-6">
-                <div>
-                  <div className="chip w-[42px] h-[32px] bg-gradient-to-br from-yellow-300 to-yellow-500 rounded-md relative overflow-hidden mb-3 shadow-md">
-                    <div className="absolute inset-[3px] border border-black/10 rounded-sm"></div>
-                    <div className="absolute left-1/2 top-[3px] bottom-[3px] w-[1.5px] bg-black/10"></div>
-                  </div>
-                  <p className="text-white/80 text-xs tracking-[0.25em] font-mono">•••• •••• •••• {user.id.toString().slice(-4)}</p>
-                  <p className="text-white/70 text-[11px] mt-1.5 uppercase tracking-wider font-semibold">{user.username}</p>
-                </div>
-                <p className="text-white/60 text-[11px] font-mono">12/28</p>
+              <div className="flex items-center gap-2">
+                <svg className="nfc-wave w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" opacity="0.7">
+                  <path d="M6 18.5a6 6 0 0 1 0-13" />
+                  <path d="M10 16a3.5 3.5 0 0 1 0-8" />
+                  <circle cx="14" cy="12" r="1" />
+                </svg>
+                <span className="text-white text-sm font-bold tracking-wider font-mono">VISA</span>
               </div>
+            </div>
+            <div className="flex items-end justify-between mt-6">
+              <div>
+                <div className="chip w-[42px] h-[32px] bg-gradient-to-br from-yellow-300 to-yellow-500 rounded-md relative overflow-hidden mb-3 shadow-md">
+                  <div className="absolute inset-[3px] border border-black/10 rounded-sm"></div>
+                  <div className="absolute left-1/2 top-[3px] bottom-[3px] w-[1.5px] bg-black/10"></div>
+                </div>
+                <p className="text-white/80 text-xs tracking-[0.25em] font-mono">•••• •••• •••• {user.id.toString().slice(-4)}</p>
+                <p className="text-white/70 text-[11px] mt-1.5 uppercase tracking-wider font-semibold">{user.username}</p>
+              </div>
+              <p className="text-white/60 text-[11px] font-mono">12/28</p>
             </div>
           </div>
         </div>
@@ -711,6 +776,83 @@ export function Wallet() {
         @keyframes pulse {
           0%, 100% { opacity: 0.5; }
           50% { opacity: 1; }
+        }
+        /* NFC Card Animations */
+        .nfc-pulse-indicator {
+          animation: nfcPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes nfcPulse {
+          0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+          70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+        .nfc-tap {
+          animation: nfcTap 1.2s ease-out;
+        }
+        @keyframes nfcTap {
+          0% { transform: scale(1) rotateZ(0deg); }
+          25% { transform: scale(1.05) rotateZ(-1deg); }
+          50% { transform: scale(0.98) rotateZ(1deg); }
+          75% { transform: scale(1.02) rotateZ(-0.5deg); }
+          100% { transform: scale(1) rotateZ(0deg); }
+        }
+        .card-flip {
+          animation: cardFlip 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        @keyframes cardFlip {
+          0% { transform: rotateY(0deg) rotateZ(-2deg) rotateX(0deg); }
+          40% { transform: rotateY(45deg) rotateZ(1deg) rotateX(2deg); }
+          60% { transform: rotateY(90deg) rotateZ(0deg) rotateX(-2deg); }
+          80% { transform: rotateY(45deg) rotateZ(-1deg) rotateX(1deg); }
+          100% { transform: rotateY(0deg) rotateZ(2deg) rotateX(0deg); }
+        }
+        .tap-feedback {
+          animation: tapFeedback 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes tapFeedback {
+          0% { transform: scale(1) translateY(0); }
+          25% { transform: scale(0.97) translateY(-4px); }
+          50% { transform: scale(0.95) translateY(-2px); }
+          100% { transform: scale(1) translateY(0); }
+        }
+        .card-glow {
+          box-shadow: 0 0 30px rgba(255, 107, 157, 0.5), 0 20px 50px rgba(255, 107, 157, 0.3) !important;
+        }
+        .nfc-ripple-effect {
+          background-color: rgba(255, 255, 255, 0.2);
+          border-radius: inherit;
+          pointer-events: none;
+        }
+        .nfc-ripple-effect.nfc-ripple {
+          animation: nfcRipple 0.8s ease-out forwards;
+        }
+        @keyframes nfcRipple {
+          0% { transform: scale(1); opacity: 1; background-color: rgba(255, 255, 255, 0.2); }
+          100% { transform: scale(1.3); opacity: 0; background-color: rgba(255, 255, 255, 0); }
+        }
+        .nfc-scan-effect {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          pointer-events: none;
+        }
+        .nfc-scan-effect::before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 60px;
+          height: 60px;
+          border: 3px solid rgba(255, 255, 255, 0.6);
+          border-radius: 50%;
+          animation: nfcScan 1.8s ease-out forwards;
+        }
+        @keyframes nfcScan {
+          0% { width: 60px; height: 60px; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+          100% { width: 280px; height: 280px; opacity: 0; transform: translate(-50%, -50%) scale(1); }
         }
       `}</style>
     </div>

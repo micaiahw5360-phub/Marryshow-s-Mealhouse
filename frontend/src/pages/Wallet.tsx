@@ -500,7 +500,8 @@ export function Wallet() {
                   <div className="absolute inset-[3px] border border-black/10 rounded-sm"></div>
                   <div className="absolute left-1/2 top-[3px] bottom-[3px] w-[1.5px] bg-black/10"></div>
                 </div>
-                <p className="text-white/80 text-xs tracking-[0.25em] font-mono">•••• •••• •••• {user.id.toString().slice(-4)}</p>
+                {/* Updated: Show actual card number instead of masked */}
+                <p className="text-white/80 text-xs tracking-wider font-mono">{user?.card_number || 'MC' + user.id.toString().padStart(8, '0')}</p>
                 <p className="text-white/70 text-[11px] mt-1.5 uppercase tracking-wider font-semibold">{user.username}</p>
               </div>
               <p className="text-white/60 text-[11px] font-mono">12/28</p>
@@ -571,19 +572,7 @@ export function Wallet() {
               </div>
             </div>
 
-            {/* Your Cards Section (Placeholder) */}
-            <div className="mb-6">
-              <h3 className="text-gray-900 font-bold text-sm mb-4">Your Cards</h3>
-              <div className="flex gap-4 overflow-x-auto pb-2">
-                <div className="card-main rounded-2xl p-4 flex-shrink-0" style={{ width: '200px', aspectRatio: '1.5/1', background: 'linear-gradient(135deg, #ff6b9d 0%, #c44569 50%, #f8b500 100%)' }}>
-                  <div className="text-white text-xs font-semibold opacity-70">Primary Card</div>
-                  <div className="text-white font-bold mt-2 font-mono">•••• {user.id.toString().slice(-4)}</div>
-                </div>
-                <button className="flex-shrink-0 w-48 rounded-2xl border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-600 font-semibold hover:bg-gray-50">
-                  <Plus className="w-6 h-6" />
-                </button>
-              </div>
-            </div>
+            {/* REMOVED: "Your Cards" section entirely */}
 
             {/* Quick Contacts */}
             <div className="mb-8">

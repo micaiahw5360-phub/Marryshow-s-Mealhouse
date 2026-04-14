@@ -249,28 +249,28 @@ switch ($path[0]) {
         }
         break;
     case 'staff':
-    require_once __DIR__ . '/controllers/StaffController.php';
-    $staffController = new StaffController();
-    if ($requestMethod === 'GET') {
-        if (isset($path[1]) && $path[1] === 'stream') {
-            $staffController->streamOrders();
-        } elseif (isset($path[1]) && $path[1] === 'metrics') {
-            $staffController->getMetrics();
-        } elseif (isset($path[1]) && $path[1] === 'orders') {
-            $staffController->getOrders();
+        require_once __DIR__ . '/controllers/StaffController.php';
+        $staffController = new StaffController();
+        if ($requestMethod === 'GET') {
+            if (isset($path[1]) && $path[1] === 'stream') {
+                $staffController->streamOrders();
+            } elseif (isset($path[1]) && $path[1] === 'metrics') {
+                $staffController->getMetrics();
+            } elseif (isset($path[1]) && $path[1] === 'orders') {
+                $staffController->getOrders();
+            } else {
+                Response::send(404, ['error' => 'Staff endpoint not found']);
+            }
+        } elseif ($requestMethod === 'PUT') {
+            if (isset($path[1]) && $path[1] === 'orders' && isset($path[3]) && $path[3] === 'status') {
+                $staffController->updateOrderStatus((int)$path[2]);
+            } else {
+                Response::send(404, ['error' => 'Staff PUT endpoint not found']);
+            }
         } else {
-            Response::send(404, ['error' => 'Staff endpoint not found']);
+            Response::send(405, ['error' => 'Method not allowed']);
         }
-    } elseif ($requestMethod === 'PUT') {
-        if (isset($path[1]) && $path[1] === 'orders' && isset($path[3]) && $path[3] === 'status') {
-            $staffController->updateOrderStatus((int)$path[2]);
-        } else {
-            Response::send(404, ['error' => 'Staff PUT endpoint not found']);
-        }
-    } else {
-        Response::send(405, ['error' => 'Method not allowed']);
-    }
-    break;
+        break;
     case 'auth':
         $controller = new AuthController();
         $subPath = $path[1] ?? null;
@@ -278,6 +278,23 @@ switch ($path[0]) {
             $controller->googleAuth();
         } else {
             Response::send(404, ['error' => 'Auth endpoint not found']);
+        }
+        break;
+    // ========== NEW KIOSK ROUTES (card‑based) ==========
+    case 'kiosk':
+        require_once __DIR__ . '/../controllers/KioskController.php';
+        $kioskController = new KioskController();
+        $subPath = $path[1] ?? null;
+        $method = $_SERVER['REQUEST_METHOD'];
+
+        if ($subPath === 'auth' && $method === 'POST') {
+            $kioskController->authenticateWithCard();
+        } elseif ($subPath === 'order' && $method === 'POST') {
+            $kioskController->placeWalletOrder();
+        } elseif ($subPath === 'balance' && $method === 'GET') {
+            $kioskController->getBalanceByCard();
+        } else {
+            Response::send(404, ['error' => 'Kiosk endpoint not found']);
         }
         break;
     default:

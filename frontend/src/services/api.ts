@@ -128,27 +128,25 @@ export const staffService = {
       { method: 'PUT', body: JSON.stringify({ status }) }),
 };
 
+// ========== UPDATED KIOSK SERVICE – CARD ONLY ==========
 export const kioskService = {
-  getUserByEmail: (email: string) =>
-    fetchAPI<{ id: number; email: string; username: string; name: string; wallet_balance: number }>(
-      `/kiosk/user-by-email.php?email=${encodeURIComponent(email)}`
-    ),
-  getBalance: (email: string) =>
-    fetchAPI<{ success: boolean; balance: number }>(`/kiosk/balance.php?email=${encodeURIComponent(email)}`),
-  
-  // NEW: Card + PIN authentication
+  // Card + PIN authentication
   authenticateWithCard: ({ cardNumber, pin }: { cardNumber: string; pin: string }) =>
     fetchAPI<{ id: number; email: string; name: string; walletBalance: number; cardNumber: string }>(
-      `/kiosk/auth-card.php`,
+      `/kiosk/auth`,
       { method: 'POST', body: JSON.stringify({ cardNumber, pin }) }
     ),
-  
-  // NEW: Place order using wallet (deduct by card number)
+
+  // Place order using wallet (deduct by card number)
   placeWalletOrder: (orderData: { cardNumber: string; items: any[]; total: number; customerEmail?: string }) =>
     fetchAPI<{ success: boolean; orderId: number; newBalance: number }>(
-      `/kiosk/order-wallet.php`,
+      `/kiosk/order`,
       { method: 'POST', body: JSON.stringify(orderData) }
     ),
+
+  // Get live balance by card number (optional, for UI refresh)
+  getBalanceByCard: (cardNumber: string) =>
+    fetchAPI<{ balance: number }>(`/kiosk/balance?cardNumber=${encodeURIComponent(cardNumber)}`),
 };
 
 const api = {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useCart } from '../../contexts/CartContext';
 import { useKiosk } from '../../contexts/KioskContext';
@@ -18,28 +18,11 @@ export function KioskCheckout() {
   const [loading, setLoading] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [guestName, setGuestName] = useState('');
-  const [walletBalance, setWalletBalance] = useState(identifiedUser?.walletBalance || 0);
 
-  // Real‑time wallet balance check
-  useEffect(() => {
-    const fetchLatestBalance = async () => {
-      if (paymentMethod === 'wallet' && identifiedUser?.email) {
-        try {
-          const data = await api.kiosk.getBalance(identifiedUser.email);
-          if (data.success) {
-            setWalletBalance(data.balance);
-          }
-        } catch (err) {
-          console.error('Failed to fetch latest balance', err);
-        }
-      }
-    };
-    fetchLatestBalance();
-  }, [paymentMethod, identifiedUser]);
-
+  // Use balance from authentication – no extra network call
+  const walletBalance = identifiedUser?.walletBalance ?? 0;
   const isWalletSufficient = walletBalance >= total;
 
-  // UPDATED handlePlaceOrder with new wallet endpoint
   const handlePlaceOrder = async () => {
     if (cartItems.length === 0) {
       toast.error('Your cart is empty');
@@ -59,7 +42,7 @@ export function KioskCheckout() {
     setLoading(true);
     try {
       if (paymentMethod === 'wallet' && identifiedUser) {
-        // Use the new wallet order endpoint with card number
+        // Use card‑based wallet order endpoint
         const result = await api.kiosk.placeWalletOrder({
           cardNumber: identifiedUser.cardNumber,
           items: cartItems.map(item => ({

@@ -122,6 +122,7 @@ export function Profile() {
   };
 
   const walletBalance = typeof user?.walletBalance === 'number' ? user.walletBalance : parseFloat(user?.walletBalance || '0');
+  const cardNumber = user?.card_number || 'Not assigned';
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -393,7 +394,8 @@ export function Profile() {
                   <div>
                     <p className="text-white/80 text-xs uppercase tracking-wider">Marryshow Card</p>
                     <p className="text-white text-2xl font-bold mt-1">${walletBalance.toFixed(2)}</p>
-                    <p className="text-white/70 text-xs mt-1 font-mono">•••• {user?.id?.toString().slice(-4) || '4291'}</p>
+                    <p className="text-white/70 text-xs mt-1 font-mono">{cardNumber}</p>
+                    <p className="text-white/60 text-[10px] mt-0.5 font-mono">•••• {user?.id?.toString().slice(-4) || '4291'}</p>
                   </div>
                   <div className="flex items-center gap-1">
                     <svg className="w-6 h-6 text-white/70" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5">

@@ -47,8 +47,16 @@ class User {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    // Helper method to generate card number
+    private function generateCardNumber($userId) {
+        return 'MC' . str_pad($userId, 8, '0', STR_PAD_LEFT);
+    }
+
+    // Updated create method with auto-generated card number
     public function create($data) {
         $balanceValue = $data['balance'] ?? 0;
+        $isActive = $data['is_active'] ?? 1;
+        
         $query = "INSERT INTO {$this->table} (username, email, password, role, balance, is_active) 
                   VALUES (:username, :email, :password, :role, :balance, :is_active)";
         $stmt = $this->conn->prepare($query);
@@ -57,9 +65,16 @@ class User {
         $stmt->bindParam(':password', $data['password']);
         $stmt->bindParam(':role', $data['role']);
         $stmt->bindParam(':balance', $balanceValue);
-        $stmt->bindParam(':is_active', $data['is_active']);
+        $stmt->bindParam(':is_active', $isActive);
+        
         if ($stmt->execute()) {
-            return $this->conn->lastInsertId();
+            $userId = $this->conn->lastInsertId();
+            $cardNumber = $this->generateCardNumber($userId);
+            $updateStmt = $this->conn->prepare("UPDATE {$this->table} SET card_number = :card WHERE id = :id");
+            $updateStmt->bindParam(':card', $cardNumber);
+            $updateStmt->bindParam(':id', $userId);
+            $updateStmt->execute();
+            return $userId;
         }
         return false;
     }
@@ -157,7 +172,6 @@ class User {
         return $users;
     }
 
-    // NEW: Delete a user by ID
     public function delete($id) {
         $query = "DELETE FROM {$this->table} WHERE id = :id";
         $stmt = $this->conn->prepare($query);

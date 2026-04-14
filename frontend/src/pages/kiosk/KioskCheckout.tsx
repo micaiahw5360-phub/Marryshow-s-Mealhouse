@@ -39,6 +39,7 @@ export function KioskCheckout() {
 
   const isWalletSufficient = walletBalance >= total;
 
+  // UPDATED handlePlaceOrder with new wallet endpoint
   const handlePlaceOrder = async () => {
     if (cartItems.length === 0) {
       toast.error('Your cart is empty');
@@ -57,35 +58,50 @@ export function KioskCheckout() {
 
     setLoading(true);
     try {
-      const orderData = {
-        items: cartItems.map(item => ({
-          id: item.menuItemId,
-          name: item.name,
-          quantity: item.quantity,
-          price: item.price,
-          subtotal: item.subtotal,
-          options: item.selectedOptions,
-        })),
-        total: total,
-        paymentMethod: paymentMethod,
-        ...(paymentMethod === 'wallet' && identifiedUser
-          ? { userId: identifiedUser.userId }
-          : { customerName: guestName }),
-        customerEmail: paymentMethod === 'cash' ? (guestName.includes('@') ? guestName : undefined) : identifiedUser?.email,
-        customerPhone: '',
-      };
+      if (paymentMethod === 'wallet' && identifiedUser) {
+        // Use the new wallet order endpoint with card number
+        const result = await api.kiosk.placeWalletOrder({
+          cardNumber: identifiedUser.cardNumber,
+          items: cartItems.map(item => ({
+            id: item.menuItemId,
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price,
+            subtotal: item.subtotal,
+            options: item.selectedOptions,
+          })),
+          total: total,
+          customerEmail: identifiedUser.email,
+        });
 
-      const result = await ordersService.createOrder(orderData);
+        clearCart();
+        clearIdentifiedUser();   // clear the kiosk session
+        toast.success('Payment successful!');
+        navigate(`/kiosk/order-confirmation?orderId=${result.orderId}`);
+      } else {
+        // Cash payment – use existing ordersService
+        const orderData = {
+          items: cartItems.map(item => ({
+            id: item.menuItemId,
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price,
+            subtotal: item.subtotal,
+            options: item.selectedOptions,
+          })),
+          total: total,
+          paymentMethod: paymentMethod,
+          customerName: guestName,
+          customerEmail: guestName.includes('@') ? guestName : undefined,
+          customerPhone: '',
+        };
 
-      clearCart();
-      if (isKioskMode) clearIdentifiedUser();
-
-      setOrderPlaced(true);
-      toast.success('Order placed successfully!');
-
-      setTimeout(() => {
-        navigate('/kiosk/order-confirmation', { state: { orderId: result.orderId } });
-      }, 2000);
+        const result = await ordersService.createOrder(orderData);
+        clearCart();
+        if (isKioskMode) clearIdentifiedUser();
+        toast.success('Order placed successfully!');
+        navigate(`/kiosk/order-confirmation?orderId=${result.orderId}`);
+      }
     } catch (error: any) {
       console.error('Order failed:', error);
       toast.error(error.message || 'Failed to place order');

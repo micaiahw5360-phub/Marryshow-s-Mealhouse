@@ -5,6 +5,7 @@ interface IdentifiedUser {
   userId: number;
   walletBalance: number;
   name: string;
+  cardNumber: string;   // ← NEW
 }
 
 interface KioskContextType {

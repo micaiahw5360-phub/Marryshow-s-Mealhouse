@@ -8,7 +8,8 @@ export function KioskGetUser() {
   const navigate = useNavigate();
   const location = useLocation();
   const { setIdentifiedUser, identifiedUser } = useKiosk();
-  const [email, setEmail] = useState('');
+  const [cardNumber, setCardNumber] = useState('');
+  const [pin, setPin] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -16,12 +17,8 @@ export function KioskGetUser() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) {
-      setError('Please enter your email address');
-      return;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError('Please enter a valid email address');
+    if (!cardNumber.trim() || !pin.trim()) {
+      setError('Please enter your card number and PIN');
       return;
     }
 
@@ -29,25 +26,30 @@ export function KioskGetUser() {
     setError('');
 
     try {
-      const userData = await api.kiosk.getUserByEmail(email.trim());
-      setIdentifiedUser({
-        email: userData.email,
-        userId: userData.id,
-        walletBalance: userData.wallet_balance || 0,
-        name: userData.name || userData.username,
+      const userData = await api.kiosk.authenticateWithCard({
+        cardNumber: cardNumber.trim(),
+        pin: pin.trim(),
       });
-      toast.success(`Welcome back, ${userData.name || userData.username}!`);
+
+      setIdentifiedUser({
+        userId: userData.id,
+        email: userData.email,
+        walletBalance: userData.walletBalance,
+        name: userData.name,
+        cardNumber: userData.cardNumber,
+      });
+      toast.success(`Welcome ${userData.name}!`);
       navigate(returnTo);
     } catch (err: any) {
-      setError(err.message || 'User not found. Please check your email.');
-      toast.error('Could not verify user');
+      setError(err.message || 'Invalid card or PIN');
+      toast.error('Authentication failed');
     } finally {
       setLoading(false);
     }
   };
 
   const handleSkip = () => {
-    toast.info('Continuing as guest. Wallet payment will not be available.');
+    toast.info('Continuing as guest. Wallet payment not available.');
     navigate(returnTo);
   };
 
@@ -63,24 +65,36 @@ export function KioskGetUser() {
       </button>
 
       <div className="kiosk-panel p-8 text-center">
-        <div className="text-7xl mb-4">💰</div>
-        <h1 className="kiosk-title text-3xl">Identify Yourself</h1>
-        <p className="kiosk-subtle mt-2">Enter your email to use your wallet balance</p>
+        <div className="text-7xl mb-4">💳</div>
+        <h1 className="kiosk-title text-3xl">Pay with Wallet</h1>
+        <p className="kiosk-subtle mt-2">Enter your Marryshow Card number and PIN</p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div>
-            <label className="block text-left font-bold mb-1">Email Address</label>
+            <label className="block text-left font-bold mb-1">Card Number</label>
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="your@email.com"
+              type="text"
+              value={cardNumber}
+              onChange={(e) => setCardNumber(e.target.value.toUpperCase())}
+              placeholder="e.g. MC00001234"
               autoFocus
               disabled={loading}
-              className="w-full p-4 border border-sand-200 rounded-kiosk text-lg focus:outline-none focus:ring-2 focus:ring-ocean-400"
+              className="w-full p-4 border rounded-kiosk text-lg font-mono focus:outline-none focus:ring-2 focus:ring-ocean-400"
             />
-            {error && <p className="text-coral-500 mt-2">⚠️ {error}</p>}
           </div>
+          <div>
+            <label className="block text-left font-bold mb-1">PIN</label>
+            <input
+              type="password"
+              value={pin}
+              onChange={(e) => setPin(e.target.value)}
+              placeholder="••••"
+              maxLength={6}
+              disabled={loading}
+              className="w-full p-4 border rounded-kiosk text-lg focus:outline-none focus:ring-2 focus:ring-ocean-400"
+            />
+          </div>
+          {error && <p className="text-coral-500">⚠️ {error}</p>}
 
           <div className="flex flex-col gap-3">
             <button
@@ -88,21 +102,21 @@ export function KioskGetUser() {
               disabled={loading}
               className="kiosk-btn kiosk-primary w-full py-4 text-xl font-black"
             >
-              {loading ? 'Checking...' : 'Continue with Wallet'}
+              {loading ? 'Verifying...' : 'Continue with Wallet'}
             </button>
             <button
               type="button"
               onClick={handleSkip}
               className="kiosk-btn bg-white w-full py-4 text-xl border-2 border-ocean-600 text-ocean-700"
             >
-              Continue as Guest
+              Pay with Cash Instead
             </button>
           </div>
         </form>
 
         <p className="kiosk-subtle text-sm mt-6">
-          💡 Your wallet balance will be used to pay for your order.<br />
-          No account? You can still order as a guest.
+          💡 Your card number is printed on your Marryshow Card.<br />
+          Forgot your PIN? Visit the campus service desk.
         </p>
       </div>
     </div>

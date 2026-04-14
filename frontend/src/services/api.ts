@@ -52,6 +52,9 @@ export const ordersService = {
     paymentMethod: string; 
     pickupTime?: string;
     userId?: number;
+    customerName?: string;
+    customerEmail?: string;
+    customerPhone?: string;
   }) =>
     fetchAPI<{ orderId: number }>('/orders', { method: 'POST', body: JSON.stringify(data) }),
   getOrders: () => fetchAPI<any[]>('/orders'),
@@ -132,6 +135,20 @@ export const kioskService = {
     ),
   getBalance: (email: string) =>
     fetchAPI<{ success: boolean; balance: number }>(`/kiosk/balance.php?email=${encodeURIComponent(email)}`),
+  
+  // NEW: Card + PIN authentication
+  authenticateWithCard: ({ cardNumber, pin }: { cardNumber: string; pin: string }) =>
+    fetchAPI<{ id: number; email: string; name: string; walletBalance: number; cardNumber: string }>(
+      `/kiosk/auth-card.php`,
+      { method: 'POST', body: JSON.stringify({ cardNumber, pin }) }
+    ),
+  
+  // NEW: Place order using wallet (deduct by card number)
+  placeWalletOrder: (orderData: { cardNumber: string; items: any[]; total: number; customerEmail?: string }) =>
+    fetchAPI<{ success: boolean; orderId: number; newBalance: number }>(
+      `/kiosk/order-wallet.php`,
+      { method: 'POST', body: JSON.stringify(orderData) }
+    ),
 };
 
 const api = {

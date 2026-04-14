@@ -47,6 +47,18 @@ class User {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function findByCardNumber($cardNumber) {
+        $query = "SELECT * FROM {$this->table} WHERE card_number = :card";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':card', $cardNumber);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($user && isset($user['balance'])) {
+        $user['walletBalance'] = (float)$user['balance'];
+    }
+    return $user;
+    }
+
     // Helper method to generate card number
     private function generateCardNumber($userId) {
         return 'MC' . str_pad($userId, 8, '0', STR_PAD_LEFT);

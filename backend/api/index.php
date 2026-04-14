@@ -282,7 +282,7 @@ switch ($path[0]) {
         break;
     // ========== NEW KIOSK ROUTES (card‑based) ==========
     case 'kiosk':
-        require_once __DIR__ . '/../controllers/KioskController.php';
+        require_once __DIR__ . '/controllers/KioskController.php';
         $kioskController = new KioskController();
         $subPath = $path[1] ?? null;
         $method = $_SERVER['REQUEST_METHOD'];

@@ -83,6 +83,10 @@ export const userService = {
     fetchAPI('/profile/password', { method: 'PUT', body: JSON.stringify({ old_password: oldPassword, new_password: newPassword }) }),
   uploadAvatar: (formData: FormData) =>
     fetchAPI('/profile/avatar', { method: 'POST', body: formData }),
+  getNotificationPreferences: () =>
+    fetchAPI<{ orderUpdates: boolean; promotions: boolean; newsletter: boolean }>('/profile/notifications'),
+  updateNotificationPreferences: (prefs: { orderUpdates: boolean; promotions: boolean; newsletter: boolean }) =>
+    fetchAPI<{ message: string }>('/profile/notifications', { method: 'PUT', body: JSON.stringify(prefs) }),
 };
 
 export const adminService = {

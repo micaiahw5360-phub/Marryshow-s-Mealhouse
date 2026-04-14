@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../components/ui/button';
@@ -13,16 +13,16 @@ import { User, Mail, Phone, MapPin, Lock, Bell, CreditCard, Camera } from 'lucid
 import { userService } from '../services/api';
 
 export function Profile() {
-  const { user, updateUser } = useAuth(); // assume updateUser exists in AuthContext
+  const { user, updateUser } = useAuth();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [formData, setFormData] = useState({
     username: user?.username || '',
     email: user?.email || '',
-    phone: user?.phone || '473-555-0123',
-    address: user?.address || 'TAMCC Campus, St. George\'s, Grenada',
-    studentId: user?.studentId || 'TC123456',
+    phone: user?.phone || '',
+    address: user?.address || '',
+    studentId: user?.studentId || '',
   });
 
   const [notifications, setNotifications] = useState({
@@ -37,16 +37,33 @@ export function Profile() {
     confirmPassword: '',
   });
 
-  const [avatarPreview, setAvatarPreview] = useState(user?.avatar || null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(user?.avatar || null);
   const [uploading, setUploading] = useState(false);
+
+  // Load notification preferences from backend
+  useEffect(() => {
+    const loadPrefs = async () => {
+      try {
+        const prefs = await userService.getNotificationPreferences();
+        setNotifications(prefs);
+      } catch (error) {
+        console.error('Failed to load notification preferences', error);
+      }
+    };
+    loadPrefs();
+  }, []);
 
   const handleSaveProfile = async () => {
     try {
-      const updated = await userService.updateProfile(formData);
-      updateUser(updated); // update context
+      const response = await userService.updateProfile(formData);
+      if (response.user) {
+        updateUser(response.user);
+      } else {
+        updateUser(response); // fallback
+      }
       toast.success('Profile updated successfully!');
-    } catch (error) {
-      toast.error('Failed to update profile');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to update profile');
     }
   };
 
@@ -55,12 +72,16 @@ export function Profile() {
       toast.error('New passwords do not match');
       return;
     }
+    if (passwordData.newPassword.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
     try {
       await userService.changePassword(passwordData.currentPassword, passwordData.newPassword);
       toast.success('Password changed successfully!');
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
-    } catch (error) {
-      toast.error('Failed to change password');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to change password');
     }
   };
 
@@ -68,15 +89,14 @@ export function Profile() {
     try {
       await userService.updateNotificationPreferences(notifications);
       toast.success('Notification preferences updated!');
-    } catch (error) {
-      toast.error('Failed to update preferences');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to update preferences');
     }
   };
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    // Validate file type/size
     if (!file.type.startsWith('image/')) {
       toast.error('Please select an image file');
       return;
@@ -90,18 +110,17 @@ export function Profile() {
       const formData = new FormData();
       formData.append('avatar', file);
       const response = await userService.uploadAvatar(formData);
-      console.log('Avatar URL received:', response.avatarUrl);
       setAvatarPreview(response.avatarUrl);
       updateUser({ ...user, avatar: response.avatarUrl });
       toast.success('Profile photo updated!');
-    } catch (error) {
-      toast.error('Upload failed');
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      toast.error(error.message || 'Upload failed');
     } finally {
       setUploading(false);
     }
   };
 
-  // Safe wallet balance display
   const walletBalance = typeof user?.walletBalance === 'number' ? user.walletBalance : parseFloat(user?.walletBalance || '0');
 
   return (
@@ -364,6 +383,36 @@ export function Profile() {
               <CardDescription>Manage your saved payment methods</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Mini Marryshow Card */}
+              <div 
+                className="relative overflow-hidden rounded-2xl p-4 cursor-pointer hover:shadow-lg transition-shadow"
+                style={{ background: 'linear-gradient(135deg, #ff6b9d 0%, #c44569 50%, #f8b500 100%)' }}
+                onClick={() => navigate('/wallet')}
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-white/80 text-xs uppercase tracking-wider">Marryshow Card</p>
+                    <p className="text-white text-2xl font-bold mt-1">${walletBalance.toFixed(2)}</p>
+                    <p className="text-white/70 text-xs mt-1 font-mono">•••• {user?.id?.toString().slice(-4) || '4291'}</p>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <svg className="w-6 h-6 text-white/70" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5">
+                      <path d="M6 18.5a6 6 0 0 1 0-13" />
+                      <path d="M10 16a3.5 3.5 0 0 1 0-8" />
+                      <circle cx="14" cy="12" r="1" />
+                    </svg>
+                    <span className="text-white text-xs font-bold tracking-wider">VISA</span>
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <Button size="sm" variant="secondary" className="bg-white/20 text-white hover:bg-white/30">
+                    Manage Wallet →
+                  </Button>
+                </div>
+              </div>
+
+              <Separator />
+
               <div className="space-y-4">
                 <div className="border rounded-lg p-4 flex items-center justify-between">
                   <div className="flex items-center space-x-4">
@@ -395,16 +444,6 @@ export function Profile() {
               <Button variant="outline" className="w-full">
                 + Add Payment Method
               </Button>
-
-              <Separator />
-
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h4 className="font-medium text-blue-900 mb-2">TAMCC Wallet Balance</h4>
-                <p className="text-2xl font-bold text-blue-900 mb-2">${walletBalance.toFixed(2)}</p>
-                <Button size="sm" variant="outline" onClick={() => navigate('/wallet')}>
-                  Add Funds
-                </Button>
-              </div>
             </CardContent>
           </Card>
         </TabsContent>

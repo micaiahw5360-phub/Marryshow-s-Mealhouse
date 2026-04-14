@@ -19,8 +19,9 @@ class RegisterController {
             Response::send(400, ['error' => 'Username, email and password required']);
         }
 
-        $username = Security::sanitizeInput($input['username']);
-        $email = Security::sanitizeInput($input['email']);
+        // Simple sanitization (no dependency on missing method)
+        $username = trim(htmlspecialchars($input['username']));
+        $email = trim(htmlspecialchars($input['email']));
         $password = $input['password'];
 
         // Check existence
@@ -34,7 +35,8 @@ class RegisterController {
             'email' => $email,
             'password' => $hashed,
             'role' => 'customer',
-            'balance' => 0
+            'balance' => 0,
+            'is_active' => 1   // ✅ Required by User::create()
         ]);
 
         if ($userId) {

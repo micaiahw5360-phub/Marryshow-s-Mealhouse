@@ -96,6 +96,9 @@ export const adminService = {
   getAllUsers: () => fetchAPI<any[]>('/admin/users'),
   toggleUserActive: (userId: string) => fetchAPI<{ message: string }>(`/admin/users/${userId}/toggle-active`, { method: 'PUT' }),
   updateUser: (userId: string, data: any) => fetchAPI<{ message: string }>(`/admin/users/${userId}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteUser: (userId: string) => fetchAPI<{ message: string }>(`/admin/users/${userId}`, { method: 'DELETE' }),
+  updateUserPassword: (userId: string, password: string) =>
+    fetchAPI<{ message: string }>(`/admin/users/${userId}/password`, { method: 'PUT', body: JSON.stringify({ password }) }),
   getAllItems: () => fetchAPI<any[]>('/admin/items'),
   createItem: (data: { name: string; category: string; price: number; image?: string; description?: string }) =>
     fetchAPI<{ id: number }>('/admin/items', { method: 'POST', body: JSON.stringify(data) }),

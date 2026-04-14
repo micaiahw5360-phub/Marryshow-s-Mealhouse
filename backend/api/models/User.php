@@ -14,7 +14,6 @@ class User {
         $stmt->execute();
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($user) {
-            // Normalize column names
             if (isset($user['balance'])) {
                 $user['walletBalance'] = (float)$user['balance'];
             } elseif (isset($user['wallet_balance'])) {
@@ -49,12 +48,7 @@ class User {
     }
 
     public function create($data) {
-        // Determine the balance column name
-        $balanceColumn = 'balance';
         $balanceValue = $data['balance'] ?? 0;
-        // If the table uses wallet_balance, adjust accordingly
-        // You can detect by checking columns or simply use the same as in the table.
-        // I'll use 'balance' here. Change to 'wallet_balance' if needed.
         $query = "INSERT INTO {$this->table} (username, email, password, role, balance, is_active) 
                   VALUES (:username, :email, :password, :role, :balance, :is_active)";
         $stmt = $this->conn->prepare($query);
@@ -98,7 +92,6 @@ class User {
     }
 
     public function updateBalance($id, $newBalance) {
-        // Use the correct column name
         $balanceColumn = 'balance';
         $query = "UPDATE {$this->table} SET $balanceColumn = :balance WHERE id = :id";
         $stmt = $this->conn->prepare($query);
@@ -124,12 +117,12 @@ class User {
     }
 
     public function updateAvatar($id, $avatarUrl) {
-    $query = "UPDATE {$this->table} SET avatar = :avatar WHERE id = :id";
-    $stmt = $this->conn->prepare($query);
-    $stmt->bindParam(':avatar', $avatarUrl);
-    $stmt->bindParam(':id', $id);
-    return $stmt->execute();
-}
+        $query = "UPDATE {$this->table} SET avatar = :avatar WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':avatar', $avatarUrl);
+        $stmt->bindParam(':id', $id);
+        return $stmt->execute();
+    }
 
     public function updateNotificationPrefs($id, $prefs) {
         $prefsJson = json_encode($prefs);
@@ -162,6 +155,14 @@ class User {
             $user['active'] = (bool)$user['active'];
         }
         return $users;
+    }
+
+    // NEW: Delete a user by ID
+    public function delete($id) {
+        $query = "DELETE FROM {$this->table} WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id);
+        return $stmt->execute();
     }
 }
 ?>

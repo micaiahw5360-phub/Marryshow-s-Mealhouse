@@ -202,7 +202,12 @@ switch ($path[0]) {
             if ($resource === 'orders' && $subResource === 'status') {
                 $adminController->updateOrderStatus($id);
             } elseif ($resource === 'users' && $id) {
-                $adminController->updateUser($id);
+                // NEW: if subResource is 'password', update password; else update user info
+                if ($subResource === 'password') {
+                    $adminController->updateUserPassword($id);
+                } else {
+                    $adminController->updateUser($id);
+                }
             } elseif ($resource === 'users' && $subResource === 'toggle-active') {
                 $adminController->toggleUserActive($id);
             } elseif ($resource === 'items' && $id) {
@@ -217,6 +222,8 @@ switch ($path[0]) {
                 $adminController->deleteItem($id);
             } elseif ($resource === 'options' && $id) {
                 $adminController->deleteOption($id);
+            } elseif ($resource === 'users' && $id) {   // NEW: delete user
+                $adminController->deleteUser($id);
             } else {
                 Response::send(404, ['error' => 'Admin DELETE endpoint not found']);
             }

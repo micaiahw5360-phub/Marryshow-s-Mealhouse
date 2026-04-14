@@ -30,7 +30,6 @@ export function ManageOrders() {
   const loadOrders = async () => {
     try {
       const data = await adminService.getAllOrders();
-      // Ensure total is numeric and dates are parsed
       const processed = (data || []).map((order: any) => ({
         ...order,
         total: typeof order.total === 'number' ? order.total : parseFloat(order.total) || 0,
@@ -55,6 +54,7 @@ export function ManageOrders() {
       case 'preparing': return 'bg-blue-100 text-blue-800';
       case 'ready': return 'bg-green-100 text-green-800';
       case 'completed': return 'bg-gray-100 text-gray-800';
+      case 'cancelled': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -79,6 +79,7 @@ export function ManageOrders() {
     preparing: orders.filter(o => o.status === 'preparing').length,
     ready: orders.filter(o => o.status === 'ready').length,
     completed: orders.filter(o => o.status === 'completed').length,
+    cancelled: orders.filter(o => o.status === 'cancelled').length,
   };
 
   if (loading) return <div className="text-center py-20">Loading Orders...</div>;
@@ -90,13 +91,14 @@ export function ManageOrders() {
         <p className="text-gray-600 mt-1">View and Update Order Statuses</p>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <Card><CardContent className="pt-6"><p className="text-sm text-gray-600">Total Orders</p><p className="text-2xl font-bold mt-1">{stats.total}</p></CardContent></Card>
+      {/* Stats – added cancelled */}
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+        <Card><CardContent className="pt-6"><p className="text-sm text-gray-600">Total</p><p className="text-2xl font-bold mt-1">{stats.total}</p></CardContent></Card>
         <Card><CardContent className="pt-6"><p className="text-sm text-gray-600">Pending</p><p className="text-2xl font-bold mt-1 text-yellow-600">{stats.pending}</p></CardContent></Card>
         <Card><CardContent className="pt-6"><p className="text-sm text-gray-600">Preparing</p><p className="text-2xl font-bold mt-1 text-blue-600">{stats.preparing}</p></CardContent></Card>
         <Card><CardContent className="pt-6"><p className="text-sm text-gray-600">Ready</p><p className="text-2xl font-bold mt-1 text-green-600">{stats.ready}</p></CardContent></Card>
         <Card><CardContent className="pt-6"><p className="text-sm text-gray-600">Completed</p><p className="text-2xl font-bold mt-1 text-gray-600">{stats.completed}</p></CardContent></Card>
+        <Card><CardContent className="pt-6"><p className="text-sm text-gray-600">Cancelled</p><p className="text-2xl font-bold mt-1 text-red-600">{stats.cancelled}</p></CardContent></Card>
       </div>
 
       {/* Orders Table */}
@@ -114,6 +116,7 @@ export function ManageOrders() {
                   <SelectItem value="preparing">Preparing</SelectItem>
                   <SelectItem value="ready">Ready</SelectItem>
                   <SelectItem value="completed">Completed</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -160,6 +163,7 @@ export function ManageOrders() {
                           <SelectItem value="preparing">Preparing</SelectItem>
                           <SelectItem value="ready">Ready</SelectItem>
                           <SelectItem value="completed">Completed</SelectItem>
+                          <SelectItem value="cancelled">Cancelled</SelectItem>
                         </SelectContent>
                       </Select>
                     </TableCell>

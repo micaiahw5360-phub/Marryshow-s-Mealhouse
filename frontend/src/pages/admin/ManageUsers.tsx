@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Edit, UserX, UserCheck } from 'lucide-react';
+import { Edit, UserX, UserCheck, Trash2, Key } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
@@ -31,6 +31,7 @@ export function ManageUsers() {
     email: '',
     role: 'customer',
     walletBalance: 0,
+    newPassword: '',
   });
 
   const loadUsers = async () => {
@@ -65,6 +66,18 @@ export function ManageUsers() {
     }
   };
 
+  const handleDeleteUser = async (userId: string, username: string) => {
+    if (window.confirm(`Are you sure you want to permanently delete user "${username}"?`)) {
+      try {
+        await adminService.deleteUser(userId);
+        toast.success('User deleted successfully');
+        loadUsers();
+      } catch (error) {
+        toast.error('Failed to delete user');
+      }
+    }
+  };
+
   const openEditDialog = (user: any) => {
     setEditingUser(user);
     setEditForm({
@@ -72,13 +85,25 @@ export function ManageUsers() {
       email: user.email || '',
       role: user.role || 'customer',
       walletBalance: user.walletBalance,
+      newPassword: '',
     });
   };
 
   const handleSaveEdit = async () => {
     if (!editingUser) return;
     try {
-      await adminService.updateUser(editingUser.id, editForm);
+      // Update basic info
+      await adminService.updateUser(editingUser.id, {
+        username: editForm.username,
+        email: editForm.email,
+        role: editForm.role,
+        walletBalance: editForm.walletBalance,
+      });
+      // If a new password was provided, update it separately
+      if (editForm.newPassword && editForm.newPassword.trim() !== '') {
+        await adminService.updateUserPassword(editingUser.id, editForm.newPassword);
+        toast.success('Password updated');
+      }
       toast.success('User updated successfully');
       setEditingUser(null);
       loadUsers();
@@ -88,7 +113,6 @@ export function ManageUsers() {
     }
   };
 
-  // Updated stats to include staff and kiosk
   const stats = {
     total: users.length,
     admins: users.filter(u => u.role === 'admin').length,
@@ -104,12 +128,11 @@ export function ManageUsers() {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold">Manage Users</h2>
-        <p className="text-gray-600 mt-1">View and Manage User Accounts</p>
+        <p className="text-gray-600 mt-1">View, edit, delete users and change passwords</p>
       </div>
 
-      {/* Stats – now includes 5 cards (total, admins, staff, kiosk, customers, active) */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        <Card><CardContent className="pt-6"><p className="text-sm text-gray-600">Total Users</p><p className="text-2xl font-bold mt-1">{stats.total}</p></CardContent></Card>
+        <Card><CardContent className="pt-6"><p className="text-sm text-gray-600">Total</p><p className="text-2xl font-bold mt-1">{stats.total}</p></CardContent></Card>
         <Card><CardContent className="pt-6"><p className="text-sm text-gray-600">Admins</p><p className="text-2xl font-bold mt-1 text-purple-600">{stats.admins}</p></CardContent></Card>
         <Card><CardContent className="pt-6"><p className="text-sm text-gray-600">Staff</p><p className="text-2xl font-bold mt-1 text-indigo-600">{stats.staff}</p></CardContent></Card>
         <Card><CardContent className="pt-6"><p className="text-sm text-gray-600">Kiosk</p><p className="text-2xl font-bold mt-1 text-cyan-600">{stats.kiosk}</p></CardContent></Card>
@@ -117,7 +140,6 @@ export function ManageUsers() {
         <Card><CardContent className="pt-6"><p className="text-sm text-gray-600">Active</p><p className="text-2xl font-bold mt-1 text-blue-600">{stats.active}</p></CardContent></Card>
       </div>
 
-      {/* Users Table */}
       <Card>
         <CardHeader><CardTitle>All Users ({users.length})</CardTitle></CardHeader>
         <CardContent>
@@ -161,8 +183,11 @@ export function ManageUsers() {
                         <Button size="sm" variant="ghost" title="Edit" onClick={() => openEditDialog(user)}>
                           <Edit className="w-4 h-4" />
                         </Button>
-                        <Button size="sm" variant="ghost" onClick={() => handleToggleActive(user.id, user.active)} title={user.active ? 'Deactivate' : 'Activate'}>
+                        <Button size="sm" variant="ghost" title="Toggle Active" onClick={() => handleToggleActive(user.id, user.active)}>
                           {user.active ? <UserX className="w-4 h-4 text-red-500" /> : <UserCheck className="w-4 h-4 text-green-500" />}
+                        </Button>
+                        <Button size="sm" variant="ghost" title="Delete User" onClick={() => handleDeleteUser(user.id, user.username)}>
+                          <Trash2 className="w-4 h-4 text-red-600" />
                         </Button>
                       </div>
                     </TableCell>
@@ -177,14 +202,12 @@ export function ManageUsers() {
         </CardContent>
       </Card>
 
-      {/* Edit User Dialog – includes all four roles */}
+      {/* Edit User Dialog with Password Change */}
       <Dialog open={!!editingUser} onOpenChange={() => setEditingUser(null)}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit User: {editingUser?.username}</DialogTitle>
-            <DialogDescription>
-              Make changes to the user account here. Click save when done.
-            </DialogDescription>
+            <DialogDescription>Update user information. Leave password blank to keep unchanged.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -205,8 +228,12 @@ export function ManageUsers() {
               </select>
             </div>
             <div>
-              <Label>Wallet Balance</Label>
+              <Label>Wallet Balance ($)</Label>
               <Input type="number" step="0.01" value={editForm.walletBalance} onChange={(e) => setEditForm({...editForm, walletBalance: parseFloat(e.target.value) || 0})} />
+            </div>
+            <div>
+              <Label>New Password (leave blank to keep current)</Label>
+              <Input type="password" placeholder="Enter new password" value={editForm.newPassword} onChange={(e) => setEditForm({...editForm, newPassword: e.target.value})} />
             </div>
             <div className="flex justify-end space-x-2 pt-4">
               <Button variant="outline" onClick={() => setEditingUser(null)}>Cancel</Button>

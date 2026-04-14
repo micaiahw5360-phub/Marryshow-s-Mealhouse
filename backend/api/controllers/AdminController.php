@@ -105,6 +105,7 @@ class AdminController {
         Response::send(200, ['message' => 'User active status toggled']);
     }
 
+    // Modified updateUser – password is NOT updated here (handled separately)
     public function updateUser($userId) {
         if (!$this->isAdmin()) Response::send(403, ['error' => 'Forbidden']);
         
@@ -112,12 +113,12 @@ class AdminController {
         if (!$input) Response::send(400, ['error' => 'No data provided']);
         
         $updateData = [];
-        
         if (isset($input['username'])) $updateData['username'] = $input['username'];
         if (isset($input['email'])) $updateData['email'] = $input['email'];
         if (isset($input['role'])) $updateData['role'] = $input['role'];
         if (isset($input['walletBalance'])) $updateData['balance'] = (float)$input['walletBalance'];
         if (isset($input['active'])) $updateData['is_active'] = $input['active'] ? 1 : 0;
+        // Password is handled separately via updateUserPassword
         
         if (empty($updateData)) {
             Response::send(400, ['error' => 'No valid fields to update']);
@@ -128,6 +129,35 @@ class AdminController {
             Response::send(200, ['message' => 'User updated successfully']);
         } else {
             Response::send(500, ['error' => 'Failed to update user']);
+        }
+    }
+
+    // NEW: Delete a user
+    public function deleteUser($userId) {
+        if (!$this->isAdmin()) Response::send(403, ['error' => 'Forbidden']);
+        $user = $this->userModel->findById($userId);
+        if (!$user) Response::send(404, ['error' => 'User not found']);
+        $result = $this->userModel->delete($userId);
+        if ($result) {
+            Response::send(200, ['message' => 'User deleted successfully']);
+        } else {
+            Response::send(500, ['error' => 'Failed to delete user']);
+        }
+    }
+
+    // NEW: Update a user's password (admin only)
+    public function updateUserPassword($userId) {
+        if (!$this->isAdmin()) Response::send(403, ['error' => 'Forbidden']);
+        $input = Security::getJsonInput();
+        if (!$input || !isset($input['password'])) {
+            Response::send(400, ['error' => 'New password required']);
+        }
+        $hashed = password_hash($input['password'], PASSWORD_DEFAULT);
+        $result = $this->userModel->updatePassword($userId, $hashed);
+        if ($result) {
+            Response::send(200, ['message' => 'Password updated']);
+        } else {
+            Response::send(500, ['error' => 'Failed to update password']);
         }
     }
 

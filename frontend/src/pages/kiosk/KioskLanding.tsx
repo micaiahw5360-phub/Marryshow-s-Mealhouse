@@ -1,7 +1,7 @@
-// KioskLanding.tsx – New design with animated elements and clear CTA
+// KioskLanding.tsx – No scroll, larger button
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { Sparkles, Coffee, Clock, Wallet } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 export function KioskLanding() {
   const navigate = useNavigate();
@@ -28,13 +28,9 @@ export function KioskLanding() {
   }, []);
 
   return (
-    <div className="min-h-full flex flex-col items-center justify-center px-4 py-8">
+    <div className="flex flex-col items-center justify-center min-h-full px-4 py-8">
       {/* Hero Section */}
       <div className="text-center max-w-3xl mx-auto animate-fadeSlide">
-        <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-semibold mb-6">
-          <Sparkles className="w-4 h-4 text-yellow-300" />
-          <span>OPEN FOR ORDERS</span>
-        </div>
         <h1 className="text-5xl md:text-7xl font-black text-white tracking-tight drop-shadow-lg">
           Marryshow's
           <span className="text-primary-400 block md:inline md:ml-4">Mealhouse</span>
@@ -60,18 +56,18 @@ export function KioskLanding() {
         </div>
       </div>
 
-      {/* Main CTA Button */}
+      {/* Larger CTA Button */}
       <div className="mt-12">
         <button
           onClick={() => navigate('/kiosk/categories')}
-          className="kiosk-btn kiosk-primary px-10 py-5 text-2xl md:text-3xl font-bold flex items-center gap-3 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+          className="kiosk-btn kiosk-primary px-12 py-6 text-3xl md:text-4xl font-bold flex items-center gap-3 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
         >
           🛍️ Start Ordering
-          <Sparkles className="w-6 h-6" />
+          <Sparkles className="w-8 h-8" />
         </button>
       </div>
 
-      {/* Feature Tiles – Simple, interactive */}
+      {/* Feature Tiles */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-16 w-full max-w-4xl">
         <div className="kiosk-tile text-center bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20 transition-all">
           <div className="text-5xl mb-3">🥪</div>

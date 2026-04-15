@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router';
 import { ShoppingCart, Home, Grid, X } from 'lucide-react';
 import { Button } from '../ui/button';
@@ -9,43 +9,48 @@ export function KioskLayout() {
   const location = useLocation();
   const { getCartCount, getCartTotal } = useCart();
   const [openCart, setOpenCart] = useState(false);
+  const starsContainerRef = useRef<HTMLDivElement>(null);
 
   const cartCount = getCartCount();
   const cartTotal = getCartTotal();
 
   const isActive = (path: string) => location.pathname === path;
 
-  // Generate stars on mount
+  // Generate stars after the container is ready
   useEffect(() => {
-    const starsContainer = document.querySelector('.kiosk-stars');
-    if (!starsContainer) return;
-    starsContainer.innerHTML = '';
+    const container = starsContainerRef.current;
+    if (!container) return;
+
+    // Clear any existing stars
+    container.innerHTML = '';
+
+    // Regular stars
     for (let i = 0; i < 80; i++) {
       const star = document.createElement('div');
       star.className = 'star';
       star.style.left = Math.random() * 100 + '%';
       star.style.top = Math.random() * 100 + '%';
       star.style.animationDelay = Math.random() * 3 + 's';
-      starsContainer.appendChild(star);
+      container.appendChild(star);
     }
+
+    // Larger glowing stars
     for (let i = 0; i < 20; i++) {
       const star = document.createElement('div');
       star.className = 'star large glow';
       star.style.left = Math.random() * 100 + '%';
       star.style.top = Math.random() * 100 + '%';
       star.style.animationDelay = Math.random() * 2.5 + 's';
-      starsContainer.appendChild(star);
+      container.appendChild(star);
     }
   }, []);
 
   return (
     <div className="kiosk-shell">
-      <div className="kiosk-stars"></div>
+      <div className="kiosk-stars" ref={starsContainerRef}></div>
       <main className="kiosk-main">
         <Outlet />
       </main>
-
-      {/* Bottom Navigation – fixed at bottom, always visible */}
       <nav className="kiosk-bottom-nav">
         <button
           onClick={() => navigate('/kiosk')}
@@ -71,7 +76,6 @@ export function KioskLayout() {
         </button>
       </nav>
 
-      {/* Cart Drawer */}
       {openCart && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-end md:items-center justify-end" onClick={() => setOpenCart(false)}>
           <div

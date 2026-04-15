@@ -1,4 +1,4 @@
-/* index.css - Complete overhaul with new color scheme and category card styling */
+/* index.css – Working version with solid white panels and starry background */
 @import './fonts.css';
 @import './tailwind.css';
 @import './theme.css';
@@ -7,69 +7,19 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --kiosk-radius: 28px;
-  --kiosk-shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
-  --kiosk-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  --bottom-nav-height: 70px;
-
-  --primary-50: #f0f9f4;
-  --primary-100: #DBF0E5;
-  --primary-200: #B7E1CD;
-  --primary-300: #8ED2B1;
-  --primary-400: #65C395;
-  --primary-500: #3CB371;
-  --primary-600: #2E8B57;
-  --primary-700: #236B43;
-  --primary-800: #1A4F32;
-  --primary-900: #113822;
-
-  --accent-50: #FFF8EB;
-  --accent-100: #FFEEC9;
-  --accent-200: #FFDD94;
-  --accent-300: #FFCC5E;
-  --accent-400: #FFBB28;
-  --accent-500: #F4A261;
-  --accent-600: #E76F51;
-  
-  --neutral-50: #FCFCFA;
-  --neutral-100: #F8F9F7;
-  --neutral-200: #E9ECEA;
-  --neutral-300: #D1D5D4;
-  --neutral-400: #9CA3A2;
-  --neutral-500: #6B7280;
-  --neutral-600: #4B5563;
-  --neutral-700: #374151;
-  --neutral-800: #1F2937;
-  --neutral-900: #111827;
-
-  --surface-white: #FFFFFF;
-  --surface-gray: #F9FAFB;
-  --surface-card: #FFFFFF;
-  --border-light: #EDF2F7;
-}
-
 html, body, #root {
   height: 100%;
 }
 
-body {
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  background: var(--neutral-100);
-  color: var(--neutral-800);
-}
-
-/* Kiosk shell – starry gradient background */
+/* Starry background only */
 .kiosk-shell {
   position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
   background: linear-gradient(180deg, #1e3a8a 0%, #0c4a6e 50%, #0f766e 100%);
-  background-attachment: fixed;
 }
 
-/* Stars container – fixed, behind everything */
 .kiosk-stars {
   position: fixed;
   top: 0;
@@ -93,11 +43,6 @@ body {
   width: 3px;
   height: 3px;
   animation: starTwinkle 2s infinite;
-  filter: drop-shadow(0 0 8px rgba(100, 200, 255, 0.6));
-}
-
-.star.glow {
-  animation: starGlow 2.5s infinite;
 }
 
 @keyframes starBlink {
@@ -110,36 +55,70 @@ body {
   50% { opacity: 1; }
 }
 
-@keyframes starGlow {
-  0%, 100% { filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.4)); }
-  50% { filter: drop-shadow(0 0 15px rgba(100, 200, 255, 0.8)); }
-}
-
-/* All kiosk content sits above stars */
+/* Content above stars */
 .kiosk-shell > * {
   position: relative;
   z-index: 1;
 }
 
-/* Main content area */
 .kiosk-main {
   flex: 1;
   overflow-y: auto;
   padding: 1rem 1.5rem 1.5rem;
 }
 
-/* Bottom Navigation – dark semi‑transparent */
+/* Solid white panels – fully opaque, text will be visible */
+.kiosk-panel,
+.category-card,
+.kiosk-tile {
+  background: white;
+  border-radius: 24px;
+  padding: 1.25rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+}
+
+.category-card {
+  padding: 2rem 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.kiosk-tile {
+  text-align: center;
+  padding: 1.5rem;
+}
+
+/* Ensure text colors are dark and readable */
+.kiosk-title,
+.kiosk-panel h1,
+.kiosk-panel h2,
+.kiosk-panel h3,
+.category-name,
+.text-primary-800,
+.text-neutral-800 {
+  color: #1F2937 !important;
+}
+
+.kiosk-subtle {
+  color: #6B7280 !important;
+}
+
+/* Bottom navigation – dark semi‑transparent */
 .kiosk-bottom-nav {
   position: sticky;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(12px);
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   display: flex;
   justify-content: space-around;
   align-items: center;
   padding: 0.5rem 1rem;
-  height: var(--bottom-nav-height);
+  height: 70px;
 }
 
 .kiosk-nav-btn {
@@ -152,7 +131,6 @@ body {
   font-size: 0.75rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.8);
-  transition: all 0.2s ease;
   cursor: pointer;
   padding: 0.5rem;
   border-radius: 40px;
@@ -170,7 +148,7 @@ body {
   position: absolute;
   top: -4px;
   right: 12px;
-  background: var(--accent-500);
+  background: #F4A261;
   color: white;
   font-size: 0.7rem;
   font-weight: bold;
@@ -182,100 +160,18 @@ body {
   justify-content: center;
 }
 
-/* ===== Panels & Cards – semi‑transparent but readable ===== */
-.kiosk-panel,
-.category-card,
-.kiosk-tile {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 24px;
-  padding: 1.25rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  transition: all 0.2s ease;
-}
-
-/* Specific card adjustments */
-.category-card {
-  padding: 2rem 1.5rem;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.kiosk-tile {
-  text-align: center;
-  padding: 1.5rem;
-}
-
-/* Titles and text – ensure dark colors */
-.kiosk-title,
-.kiosk-panel h1,
-.kiosk-panel h2,
-.kiosk-panel h3,
-.category-name,
-.text-primary-800,
-.text-neutral-800 {
-  color: var(--neutral-800);
-}
-
-.kiosk-subtle,
-.text-neutral-500 {
-  color: var(--neutral-500);
-}
-
-/* Buttons – keep original styling */
+/* Buttons */
 .kiosk-btn {
   border-radius: 60px;
   padding: 0.6rem 1.5rem;
   font-weight: 600;
-  transition: all 0.2s ease;
   cursor: pointer;
   border: none;
-  font-size: 1rem;
-  background: transparent;
 }
-
 .kiosk-primary {
-  background: var(--primary-500);
+  background: #3CB371;
   color: white;
-  box-shadow: 0 2px 8px rgba(60, 179, 113, 0.25);
 }
-
 .kiosk-primary:hover {
-  background: var(--primary-600);
-  transform: translateY(-1px);
+  background: #2E8B57;
 }
-
-.kiosk-outline {
-  background: white;
-  border: 2px solid var(--primary-500);
-  color: var(--primary-600);
-}
-
-/* Cart drawer – solid white for readability */
-.kiosk-cart-drawer {
-  background: white;
-  border-radius: 32px 32px 0 0;
-}
-
-@media (min-width: 768px) {
-  .kiosk-cart-drawer {
-    border-radius: 32px 0 0 32px;
-  }
-}
-
-/* Animation */
-@keyframes fadeSlide {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.kiosk-panel, .category-card {
-  animation: fadeSlide 0.3s ease-out;
-}
-
-/* Utility overrides */
-.bg-primary-50 { background-color: var(--primary-50); }
-.text-accent-500 { color: var(--accent-500); }

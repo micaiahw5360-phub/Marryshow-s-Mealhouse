@@ -3,6 +3,7 @@ import { Outlet, useNavigate, useLocation } from 'react-router';
 import { ShoppingCart, Home, Grid, X } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useCart } from '../../contexts/CartContext';
+import { ErrorBoundary } from '../ui/ErrorBoundary';
 
 export function KioskLayout() {
   const navigate = useNavigate();
@@ -47,7 +48,9 @@ export function KioskLayout() {
     <div className="kiosk-shell">
       <div className="kiosk-stars"></div>
       <main className="kiosk-main">
-        <Outlet />
+        <ErrorBoundary>
+          <Outlet />
+        </ErrorBoundary>
       </main>
       <nav className="kiosk-bottom-nav">
         <button

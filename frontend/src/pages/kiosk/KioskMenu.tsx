@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../componen
 import { Label } from '../../components/ui/label';
 import { RadioGroup, RadioGroupItem } from '../../components/ui/radio-group';
 import { Button } from '../../components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ShoppingCart } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface MenuItem {
@@ -21,7 +21,6 @@ interface MenuItem {
   options?: any[];
 }
 
-// Helper to normalize options
 const normalizeItem = (raw: any): MenuItem => ({
   ...raw,
   price: typeof raw.price === 'string' ? parseFloat(raw.price) : raw.price,
@@ -50,6 +49,7 @@ export function KioskMenu() {
   const [currentPrice, setCurrentPrice] = useState(0);
 
   const decodedCategory = decodeURIComponent(category || '');
+  const cartCount = getCartCount();
 
   const fetchItems = async () => {
     setLoading(true);
@@ -92,7 +92,6 @@ export function KioskMenu() {
     }
   };
 
-  // Recalculate price when options change
   useEffect(() => {
     if (!selectedItem) return;
     let modifierSum = 0;
@@ -144,11 +143,11 @@ export function KioskMenu() {
     }
   };
 
-  if (loading) return <div className="text-center text-xl py-16">Loading menu items...</div>;
+  if (loading) return <div className="text-center text-xl py-16 text-white">Loading menu items...</div>;
   if (error) {
     return (
       <div className="text-center py-16">
-        <p className="text-red-600">Error: {error}</p>
+        <p className="text-red-400">Error: {error}</p>
         <button onClick={fetchItems} className="kiosk-btn mt-4 px-6 py-2">Retry</button>
       </div>
     );
@@ -158,7 +157,7 @@ export function KioskMenu() {
     return (
       <div className="text-center py-16">
         <div className="text-6xl mb-4">🍽️</div>
-        <h2 className="text-3xl font-bold text-primary-800">No items in this category</h2>
+        <h2 className="text-3xl font-bold text-white">No items in this category</h2>
         <button onClick={() => navigate('/kiosk/categories')} className="kiosk-btn kiosk-primary mt-6 px-6 py-3">
           Choose Another Category
         </button>
@@ -167,28 +166,21 @@ export function KioskMenu() {
   }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <button onClick={() => navigate('/kiosk/categories')} className="kiosk-btn bg-white px-6 py-2 shadow-sm">
-          ← Back to Categories
-        </button>
-        <div className="flex items-center gap-3">
-          <span className="text-lg font-bold text-primary-800">Cart: {getCartCount()}</span>
-          <button onClick={() => navigate('/kiosk/cart')} className="kiosk-btn bg-white px-6 py-2 shadow-sm">
-            🛒 View Cart
-          </button>
-        </div>
-      </div>
+    <div className="relative pb-20">
+      {/* Back button */}
+      <button onClick={() => navigate('/kiosk/categories')} className="kiosk-btn bg-white/20 backdrop-blur-sm text-white px-6 py-2 mb-6 shadow-sm">
+        ← Back to Categories
+      </button>
 
       <div className="mb-8">
-        <h1 className="kiosk-title text-4xl">{decodedCategory}</h1>
-        <p className="kiosk-subtle text-lg">Tap + to add items to your order</p>
+        <h1 className="kiosk-title text-4xl text-white">{decodedCategory}</h1>
+        <p className="kiosk-subtle text-white/80 text-lg">Tap + to add items to your order</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {items.map((item) => (
           <div key={item.id} className="kiosk-tile kiosk-tile-hover">
-            <div className="h-40 bg-primary-50 rounded-kiosk flex items-center justify-center overflow-hidden">
+            <div className="h-40 bg-white/10 rounded-kiosk flex items-center justify-center overflow-hidden">
               {item.image ? (
                 <img src={item.image} alt={item.name} className="object-cover w-full h-full" />
               ) : (
@@ -196,10 +188,10 @@ export function KioskMenu() {
               )}
             </div>
             <div className="mt-4">
-              <h3 className="text-2xl font-extrabold text-primary-800">{item.name}</h3>
-              <p className="kiosk-subtle mt-1">{item.description || 'Delicious fresh item'}</p>
+              <h3 className="text-2xl font-extrabold text-white">{item.name}</h3>
+              <p className="text-white/70 mt-1">{item.description || 'Delicious fresh item'}</p>
               <div className="flex justify-between items-center mt-4">
-                <span className="text-2xl font-black">${item.price.toFixed(2)}</span>
+                <span className="text-2xl font-black text-white">${item.price.toFixed(2)}</span>
                 <button
                   onClick={() => handleAddClick(item)}
                   disabled={addingId === item.id}
@@ -213,9 +205,22 @@ export function KioskMenu() {
         ))}
       </div>
 
+      {/* Floating Cart Button */}
+      <button
+        onClick={() => navigate('/kiosk/cart')}
+        className="fixed bottom-24 right-4 z-50 bg-primary-500 text-white p-4 rounded-full shadow-xl hover:bg-primary-600 transition-all transform hover:scale-110"
+      >
+        <ShoppingCart className="w-8 h-8" />
+        {cartCount > 0 && (
+          <span className="absolute -top-2 -right-2 bg-accent-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+            {cartCount}
+          </span>
+        )}
+      </button>
+
       {/* Options Dialog */}
       <Dialog open={!!selectedItem} onOpenChange={() => setSelectedItem(null)}>
-        <DialogContent className="max-w-md rounded-kiosk">
+        <DialogContent className="max-w-md rounded-kiosk bg-white/90 backdrop-blur-md">
           {loadingItem ? (
             <div className="flex flex-col items-center py-8">
               <Loader2 className="w-8 h-8 animate-spin text-primary-800" />

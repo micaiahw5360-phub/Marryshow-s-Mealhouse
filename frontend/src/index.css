@@ -1,4 +1,4 @@
-/* index.css - Complete overhaul with new color scheme and category card styling */
+/* index.css - Complete overhaul with frosted glass cards and fixed layout */
 @import './fonts.css';
 @import './tailwind.css';
 @import './theme.css';
@@ -73,10 +73,10 @@ body {
 .kiosk-main {
   flex: 1 1 auto;
   overflow-y: auto;
-  padding: 1rem 1.5rem 1.5rem;
+  padding: 1rem 1.5rem 80px; /* extra bottom padding for floating cart button */
 }
 
-/* Bottom Navigation – dark semi‑transparent, fixed at bottom */
+/* Bottom Navigation – fixed at bottom, dark semi‑transparent */
 .kiosk-bottom-nav {
   flex-shrink: 0;
   background-color: rgba(0, 0, 0, 0.7);
@@ -162,18 +162,32 @@ body {
   z-index: 1;
 }
 
-/* ===== CARDS & PANELS (semi‑transparent, readable) ===== */
+/* ===== FROSTED GLASS CARDS & PANELS ===== */
 .kiosk-panel,
 .category-card,
 .kiosk-tile {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(12px);
   border-radius: 24px;
   padding: 1.25rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.3);
   transition: all 0.2s ease;
 }
 
+/* Ensure all text inside cards is white */
+.kiosk-panel,
+.kiosk-panel *,
+.category-card *,
+.kiosk-tile * {
+  color: white;
+}
+
+.kiosk-subtle {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Category card specific */
 .category-card {
   padding: 2rem 1.5rem;
   text-align: center;
@@ -183,23 +197,17 @@ body {
   gap: 0.75rem;
 }
 
+.category-name {
+  color: white !important;
+}
+
+.category-link {
+  color: #FFD966 !important;
+}
+
 .kiosk-tile {
   text-align: center;
   padding: 1.5rem;
-}
-
-.kiosk-title,
-.kiosk-panel h1,
-.kiosk-panel h2,
-.kiosk-panel h3,
-.category-name,
-.text-primary-800,
-.text-neutral-800 {
-  color: var(--neutral-800);
-}
-
-.kiosk-subtle {
-  color: var(--neutral-500);
 }
 
 /* ===== BUTTONS ===== */

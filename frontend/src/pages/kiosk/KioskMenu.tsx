@@ -180,11 +180,16 @@ export function KioskMenu() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {items.map((item) => (
           <div key={item.id} className="kiosk-tile kiosk-tile-hover">
-            <div className="h-40 bg-white/10 rounded-kiosk flex items-center justify-center overflow-hidden">
+            {/* Image container – flexible height, shows full image without cropping */}
+            <div className="w-full flex items-center justify-center bg-white/5 rounded-kiosk overflow-hidden">
               {item.image ? (
-                <img src={item.image} alt={item.name} className="object-cover w-full h-full" />
+                <img 
+                  src={item.image} 
+                  alt={item.name} 
+                  className="w-full h-auto max-h-48 object-contain" 
+                />
               ) : (
-                <div className="text-6xl">🥪</div>
+                <div className="text-6xl py-8">🥪</div>
               )}
             </div>
             <div className="mt-4">
@@ -205,14 +210,14 @@ export function KioskMenu() {
         ))}
       </div>
 
-      {/* Floating Cart Button */}
+      {/* Floating Cart Button – dark frosted glass */}
       <button
         onClick={() => navigate('/kiosk/cart')}
-        className="fixed bottom-24 right-4 z-50 bg-primary-500 text-white p-4 rounded-full shadow-xl hover:bg-primary-600 transition-all transform hover:scale-110"
+        className="fixed bottom-24 right-4 z-50 bg-black/50 backdrop-blur-md text-white p-4 rounded-full shadow-xl hover:bg-black/70 transition-all transform hover:scale-110 border border-white/20"
       >
         <ShoppingCart className="w-8 h-8" />
         {cartCount > 0 && (
-          <span className="absolute -top-2 -right-2 bg-accent-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+          <span className="absolute -top-2 -right-2 bg-accent-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg">
             {cartCount}
           </span>
         )}
@@ -232,7 +237,7 @@ export function KioskMenu() {
                 <DialogTitle className="text-2xl font-black text-primary-800">{selectedItem.name}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
-                <img src={selectedItem.image} alt={selectedItem.name} className="rounded-lg w-full h-40 object-cover" />
+                <img src={selectedItem.image} alt={selectedItem.name} className="rounded-lg w-full h-auto max-h-48 object-contain" />
                 <p>{selectedItem.description}</p>
                 <div className="font-bold text-xl text-primary-800">${currentPrice.toFixed(2)}</div>
                 {selectedItem.options?.map((opt) => (

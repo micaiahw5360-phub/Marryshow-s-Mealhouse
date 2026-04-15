@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router';
 import { ShoppingCart, Home, Grid, X } from 'lucide-react';
 import { Button } from '../ui/button';
@@ -15,9 +15,41 @@ export function KioskLayout() {
 
   const isActive = (path: string) => location.pathname === path;
 
+  // Generate stars on mount
+  useEffect(() => {
+    const starsContainer = document.querySelector('.kiosk-stars');
+    if (!starsContainer) return;
+
+    // Clear any existing stars (in case of hot reload)
+    starsContainer.innerHTML = '';
+
+    // Regular stars
+    for (let i = 0; i < 80; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.animationDelay = Math.random() * 3 + 's';
+      starsContainer.appendChild(star);
+    }
+
+    // Larger glowing stars
+    for (let i = 0; i < 20; i++) {
+      const star = document.createElement('div');
+      star.className = 'star large glow';
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.animationDelay = Math.random() * 2.5 + 's';
+      starsContainer.appendChild(star);
+    }
+  }, []); // runs once
+
   return (
     <div className="kiosk-shell">
-      {/* Main content – full width (header removed) */}
+      {/* Stars background container */}
+      <div className="kiosk-stars"></div>
+
+      {/* Main content */}
       <main className="kiosk-main">
         <Outlet />
       </main>
@@ -50,7 +82,7 @@ export function KioskLayout() {
         </button>
       </nav>
 
-      {/* Cart Drawer – slides from bottom on mobile, right on desktop */}
+      {/* Cart Drawer */}
       {openCart && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-end md:items-center justify-end md:justify-end" onClick={() => setOpenCart(false)}>
           <div

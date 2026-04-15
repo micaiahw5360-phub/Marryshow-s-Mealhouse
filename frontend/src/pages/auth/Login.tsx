@@ -179,14 +179,7 @@ export function Login() {
             <span className="text-gray-600">Don't have an account? </span>
             <Link to="/register" className="text-[#074af2] hover:underline font-medium">Create One Now</Link>
           </div>
-
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-sm font-medium text-blue-900 mb-2">Demo Credentials:</p>
-            <p className="text-xs text-blue-800"><strong>Admin:</strong> admin@tamcc.edu.gd / password</p>
-            <p className="text-xs text-blue-800 mt-1"><strong>Kiosk:</strong> kiosk@tamcc.edu.gd / password</p>
-            <p className="text-xs text-blue-800 mt-1"><strong>Customer:</strong> Any email / Any password</p>
-          </div>
-
+          
           <div className="mt-6 text-center">
             <p className="text-xs text-gray-500">By signing in, you agree to our <Link to="/terms" className="text-[#074af2] hover:underline">Terms of Service</Link> and <Link to="/privacy" className="text-[#074af2] hover:underline">Privacy Policy</Link></p>
           </div>

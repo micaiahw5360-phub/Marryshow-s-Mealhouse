@@ -20,7 +20,6 @@ export function KioskLayout() {
     const starsContainer = document.querySelector('.kiosk-stars');
     if (!starsContainer) return;
 
-    // Clear any existing stars (in case of hot reload)
     starsContainer.innerHTML = '';
 
     // Regular stars
@@ -42,19 +41,14 @@ export function KioskLayout() {
       star.style.animationDelay = Math.random() * 2.5 + 's';
       starsContainer.appendChild(star);
     }
-  }, []); // runs once
+  }, []);
 
   return (
     <div className="kiosk-shell">
-      {/* Stars background container */}
       <div className="kiosk-stars"></div>
-
-      {/* Main content */}
       <main className="kiosk-main">
         <Outlet />
       </main>
-
-      {/* Bottom Navigation Bar */}
       <nav className="kiosk-bottom-nav">
         <button
           onClick={() => navigate('/kiosk')}
@@ -75,16 +69,13 @@ export function KioskLayout() {
           className="kiosk-nav-btn cart-btn relative"
         >
           <ShoppingCart className="w-6 h-6" />
-          {cartCount > 0 && (
-            <span className="cart-badge">{cartCount}</span>
-          )}
+          {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
           <span>Cart</span>
         </button>
       </nav>
 
-      {/* Cart Drawer */}
       {openCart && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-end md:items-center justify-end md:justify-end" onClick={() => setOpenCart(false)}>
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-end md:items-center justify-end" onClick={() => setOpenCart(false)}>
           <div
             className="kiosk-cart-drawer bg-white w-full md:max-w-md rounded-t-3xl md:rounded-l-3xl md:rounded-tr-none shadow-2xl"
             onClick={(e) => e.stopPropagation()}

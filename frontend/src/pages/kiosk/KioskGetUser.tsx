@@ -79,7 +79,7 @@ export function KioskGetUser() {
               placeholder="e.g. MC00001234"
               autoFocus
               disabled={loading}
-              className="w-full p-4 border rounded-kiosk text-lg font-mono focus:outline-none focus:ring-2 focus:ring-ocean-400"
+              className="w-full p-4 border rounded-kiosk text-lg font-mono focus:outline-none focus:ring-2 focus:ring-primary-400"
             />
           </div>
           <div>
@@ -91,10 +91,10 @@ export function KioskGetUser() {
               placeholder="••••"
               maxLength={6}
               disabled={loading}
-              className="w-full p-4 border rounded-kiosk text-lg focus:outline-none focus:ring-2 focus:ring-ocean-400"
+              className="w-full p-4 border rounded-kiosk text-lg focus:outline-none focus:ring-2 focus:ring-primary-400"
             />
           </div>
-          {error && <p className="text-coral-500">⚠️ {error}</p>}
+          {error && <p className="text-accent-500">⚠️ {error}</p>}
 
           <div className="flex flex-col gap-3">
             <button
@@ -107,7 +107,7 @@ export function KioskGetUser() {
             <button
               type="button"
               onClick={handleSkip}
-              className="kiosk-btn bg-white w-full py-4 text-xl border-2 border-ocean-600 text-ocean-700"
+              className="kiosk-btn bg-white w-full py-4 text-xl border-2 border-primary-600 text-primary-700"
             >
               Pay with Cash Instead
             </button>

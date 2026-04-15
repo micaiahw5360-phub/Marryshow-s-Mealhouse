@@ -45,8 +45,8 @@ export function KioskCart() {
     return (
       <div className="text-center py-16">
         <div className="text-7xl mb-5">🛒</div>
-        <h2 className="text-4xl font-black text-ocean-800">Your cart is empty</h2>
-        <p className="text-ocean-600 text-lg mt-2">Add some delicious items from our menu</p>
+        <h2 className="text-4xl font-black text-primary-800">Your cart is empty</h2>
+        <p className="text-primary-600 text-lg mt-2">Add some delicious items from our menu</p>
         <button
           onClick={() => navigate('/kiosk/categories')}
           className="kiosk-btn kiosk-primary mt-8 px-10 py-4 text-xl font-black"
@@ -63,7 +63,7 @@ export function KioskCart() {
         <button onClick={() => navigate(-1)} className="kiosk-btn bg-white px-6 py-2 shadow-sm">
           ← Back
         </button>
-        <button onClick={handleClearCart} className="kiosk-btn bg-white px-6 py-2 text-coral-500">
+        <button onClick={handleClearCart} className="kiosk-btn bg-white px-6 py-2 text-accent-500">
           Clear Cart
         </button>
       </div>
@@ -74,10 +74,10 @@ export function KioskCart() {
         {cartItems.map((item) => (
           <div key={item.id} className="kiosk-panel p-5 flex flex-wrap items-center justify-between gap-4">
             <div className="flex-1">
-              <h3 className="text-2xl font-extrabold text-ocean-800">{item.name}</h3>
+              <h3 className="text-2xl font-extrabold text-primary-800">{item.name}</h3>
               <p className="kiosk-subtle">${(item.price ?? 0).toFixed(2)} each</p>
               {Object.keys(item.selectedOptions).length > 0 && (
-                <p className="text-sm text-ocean-600 mt-1">
+                <p className="text-sm text-primary-600 mt-1">
                   {Object.values(item.selectedOptions).map((opt: any) => opt.name).join(', ')}
                 </p>
               )}
@@ -98,7 +98,7 @@ export function KioskCart() {
               </button>
               <button
                 onClick={() => removeFromCart(item.id)}
-                className="kiosk-btn bg-white px-4 py-2 text-coral-500"
+                className="kiosk-btn bg-white px-4 py-2 text-accent-500"
               >
                 🗑️ Remove
               </button>
@@ -110,15 +110,15 @@ export function KioskCart() {
         ))}
       </div>
 
-      <div className="kiosk-panel p-6 mt-8">
+      <div className="kiosk-panel p-6 mt-8 bg-primary-50">
         <div className="flex justify-between text-2xl font-black">
           <span>Total</span>
-          <span>${total.toFixed(2)}</span>
+          <span className="text-primary-700">${total.toFixed(2)}</span>
         </div>
         {isKioskMode && identifiedUser && (
           <div className="flex justify-between text-lg mt-2">
             <span className="kiosk-subtle">💰 Wallet Balance:</span>
-            <span className="font-bold text-ocean-800">${identifiedUser.walletBalance.toFixed(2)}</span>
+            <span className="font-bold text-primary-700">${identifiedUser.walletBalance.toFixed(2)}</span>
           </div>
         )}
       </div>

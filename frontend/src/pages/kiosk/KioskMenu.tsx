@@ -158,7 +158,7 @@ export function KioskMenu() {
     return (
       <div className="text-center py-16">
         <div className="text-6xl mb-4">🍽️</div>
-        <h2 className="text-3xl font-bold text-ocean-800">No items in this category</h2>
+        <h2 className="text-3xl font-bold text-primary-800">No items in this category</h2>
         <button onClick={() => navigate('/kiosk/categories')} className="kiosk-btn kiosk-primary mt-6 px-6 py-3">
           Choose Another Category
         </button>
@@ -173,7 +173,7 @@ export function KioskMenu() {
           ← Back to Categories
         </button>
         <div className="flex items-center gap-3">
-          <span className="text-lg font-bold text-ocean-800">Cart: {getCartCount()}</span>
+          <span className="text-lg font-bold text-primary-800">Cart: {getCartCount()}</span>
           <button onClick={() => navigate('/kiosk/cart')} className="kiosk-btn bg-white px-6 py-2 shadow-sm">
             🛒 View Cart
           </button>
@@ -188,7 +188,7 @@ export function KioskMenu() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {items.map((item) => (
           <div key={item.id} className="kiosk-tile kiosk-tile-hover">
-            <div className="h-40 bg-ocean-50 rounded-kiosk flex items-center justify-center overflow-hidden">
+            <div className="h-40 bg-primary-50 rounded-kiosk flex items-center justify-center overflow-hidden">
               {item.image ? (
                 <img src={item.image} alt={item.name} className="object-cover w-full h-full" />
               ) : (
@@ -196,7 +196,7 @@ export function KioskMenu() {
               )}
             </div>
             <div className="mt-4">
-              <h3 className="text-2xl font-extrabold text-ocean-800">{item.name}</h3>
+              <h3 className="text-2xl font-extrabold text-primary-800">{item.name}</h3>
               <p className="kiosk-subtle mt-1">{item.description || 'Delicious fresh item'}</p>
               <div className="flex justify-between items-center mt-4">
                 <span className="text-2xl font-black">${item.price.toFixed(2)}</span>
@@ -218,18 +218,18 @@ export function KioskMenu() {
         <DialogContent className="max-w-md rounded-kiosk">
           {loadingItem ? (
             <div className="flex flex-col items-center py-8">
-              <Loader2 className="w-8 h-8 animate-spin text-ocean-800" />
+              <Loader2 className="w-8 h-8 animate-spin text-primary-800" />
               <p className="mt-4">Loading options...</p>
             </div>
           ) : selectedItem && (
             <>
               <DialogHeader>
-                <DialogTitle className="text-2xl font-black text-ocean-800">{selectedItem.name}</DialogTitle>
+                <DialogTitle className="text-2xl font-black text-primary-800">{selectedItem.name}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <img src={selectedItem.image} alt={selectedItem.name} className="rounded-lg w-full h-40 object-cover" />
                 <p>{selectedItem.description}</p>
-                <div className="font-bold text-xl text-ocean-800">${currentPrice.toFixed(2)}</div>
+                <div className="font-bold text-xl text-primary-800">${currentPrice.toFixed(2)}</div>
                 {selectedItem.options?.map((opt) => (
                   <div key={opt.id}>
                     <Label className="font-bold">{opt.name}</Label>
@@ -243,7 +243,7 @@ export function KioskMenu() {
                           <Label htmlFor={val.id} className="flex-1">
                             {val.name}
                             {val.priceModifier !== 0 && (
-                              <span className="text-ocean-600 ml-2">(+${val.priceModifier.toFixed(2)})</span>
+                              <span className="text-primary-600 ml-2">(+${val.priceModifier.toFixed(2)})</span>
                             )}
                           </Label>
                         </div>

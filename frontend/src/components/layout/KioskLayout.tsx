@@ -76,7 +76,7 @@ export function KioskLayout() {
                     <p className="text-2xl font-bold mt-2">Total: ${cartTotal.toFixed(2)}</p>
                   </div>
                   <Button
-                    className="w-full bg-school-800 text-white py-3 rounded-full font-bold"
+                    className="w-full bg-primary-600 text-white py-3 rounded-full font-bold hover:bg-primary-700"
                     onClick={() => {
                       setOpenCart(false);
                       navigate('/kiosk/cart');

@@ -106,7 +106,7 @@ export function KioskCheckout() {
   if (cartItems.length === 0) {
     return (
       <div className="text-center py-16">
-        <h2 className="text-3xl font-bold text-ocean-800">Cart is empty</h2>
+        <h2 className="text-3xl font-bold text-primary-800">Cart is empty</h2>
         <button onClick={() => navigate('/kiosk/categories')} className="kiosk-btn kiosk-primary mt-6 px-6 py-3">
           Browse Menu
         </button>
@@ -123,7 +123,7 @@ export function KioskCheckout() {
 
       <div className="grid md:grid-cols-2 gap-8">
         <div className="kiosk-panel p-6">
-          <h2 className="text-2xl font-bold text-ocean-800 mb-4">Order Summary</h2>
+          <h2 className="text-2xl font-bold text-primary-800 mb-4">Order Summary</h2>
           <div className="space-y-2">
             {cartItems.map((item) => (
               <div key={item.id} className="flex justify-between">
@@ -132,7 +132,7 @@ export function KioskCheckout() {
               </div>
             ))}
           </div>
-          <div className="border-t border-sand-200 mt-4 pt-4">
+          <div className="border-t border-neutral-200 mt-4 pt-4">
             <div className="flex justify-between text-xl font-black">
               <span>Total</span>
               <span>${total.toFixed(2)}</span>
@@ -141,7 +141,7 @@ export function KioskCheckout() {
         </div>
 
         <div className="kiosk-panel p-6">
-          <h2 className="text-2xl font-bold text-ocean-800 mb-4">Payment Method</h2>
+          <h2 className="text-2xl font-bold text-primary-800 mb-4">Payment Method</h2>
           <div className="space-y-4">
             {identifiedUser && (
               <label className="flex items-center gap-3 p-3 border rounded-kiosk cursor-pointer">
@@ -156,7 +156,7 @@ export function KioskCheckout() {
                 <span className="flex-1">
                   Wallet Balance (Available: ${walletBalance.toFixed(2)})
                 </span>
-                {!isWalletSufficient && <span className="text-coral-500">⚠️ Insufficient</span>}
+                {!isWalletSufficient && <span className="text-accent-500">⚠️ Insufficient</span>}
               </label>
             )}
             <label className="flex items-center gap-3 p-3 border rounded-kiosk cursor-pointer">
@@ -178,7 +178,7 @@ export function KioskCheckout() {
               placeholder="Your name (for order pickup)"
               value={guestName}
               onChange={(e) => setGuestName(e.target.value)}
-              className="w-full p-3 border rounded-kiosk mt-4 text-lg focus:outline-none focus:ring-2 focus:ring-ocean-400"
+              className="w-full p-3 border rounded-kiosk mt-4 text-lg focus:outline-none focus:ring-2 focus:ring-primary-400"
             />
           )}
 

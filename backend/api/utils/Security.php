@@ -17,16 +17,20 @@ class Security {
         }
     }
 
-    public static function generateToken($userId) {
-        $header = base64_encode(json_encode(['alg' => 'HS256', 'typ' => 'JWT']));
-        $payload = base64_encode(json_encode([
-            'user_id' => $userId,
-            'exp' => time() + (86400 * 7) // 7 days
-        ]));
-        $signature = hash_hmac('sha256', "$header.$payload", self::$secret_key, true);
-        $signature = base64_encode($signature);
-        return "$header.$payload.$signature";
-    }
+    public static function generateToken($userId, $expiresIn = 604800) { // default 7 days (604800 seconds)
+    $issuedAt = time();
+    $expire = $issuedAt + $expiresIn;
+
+    $header = base64_encode(json_encode(['alg' => 'HS256', 'typ' => 'JWT']));
+    $payload = base64_encode(json_encode([
+        'user_id' => $userId,
+        'iat' => $issuedAt,
+        'exp' => $expire
+    ]));
+    $signature = hash_hmac('sha256', "$header.$payload", self::$secret_key, true);
+    $signature = base64_encode($signature);
+    return "$header.$payload.$signature";
+}
 
     public static function getJsonInput() {
         $input = file_get_contents('php://input');

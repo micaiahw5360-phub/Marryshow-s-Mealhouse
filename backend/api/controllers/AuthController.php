@@ -25,28 +25,27 @@ class AuthController {
     }
 
     public function post() {
-        $input = Security::getJsonInput();
-        if (!$input || !isset($input['email']) || !isset($input['password'])) {
-            Response::send(400, ['error' => 'Email and password required']);
-        }
-
-        $user = $this->userModel->findByEmail($input['email']);
-        if (!$user) {
-            Response::send(401, ['error' => 'Invalid email or password']);
-        }
-
-        if (!password_verify($input['password'], $user['password'])) {
-            Response::send(401, ['error' => 'Invalid email or password']);
-        }
-
-        if (isset($user['is_active']) && !$user['is_active']) {
-            Response::send(403, ['error' => 'Account is deactivated']);
-        }
-
-        $token = Security::generateToken($user['id']);
-        unset($user['password']);
-        Response::send(200, ['user' => $user, 'token' => $token]);
+    $input = Security::getJsonInput();
+    if (!$input || !isset($input['email']) || !isset($input['password'])) {
+        Response::send(400, ['error' => 'Email and password required']);
     }
+
+    $user = $this->userModel->findByEmail($input['email']);
+    if (!$user || !password_verify($input['password'], $user['password'])) {
+        Response::send(401, ['error' => 'Invalid email or password']);
+    }
+    if (isset($user['is_active']) && !$user['is_active']) {
+        Response::send(403, ['error' => 'Account is deactivated']);
+    }
+
+    // ✅ Determine token expiration based on "remember me" flag
+    $remember = isset($input['remember']) && $input['remember'] === true;
+    $expiresIn = $remember ? 2592000 : 604800; // 30 days vs 7 days
+
+    $token = Security::generateToken($user['id'], $expiresIn);
+    unset($user['password']);
+    Response::send(200, ['user' => $user, 'token' => $token]);
+}
 
     public function forgotPassword() {
         Response::send(501, ['error' => 'Not implemented']);

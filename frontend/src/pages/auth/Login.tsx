@@ -95,7 +95,7 @@ export function Login() {
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
             {/* Replace the blue "T" box with your logo */}
-            <img src={logo2} alt="Marryshow's Mealhouse" className="w-32 h-32 object-contain" />
+            <img src={logo2} alt="Marryshow's Mealhouse" className="w-48 h-48 object-contain" />
           </div>
           <CardTitle className="text-2xl">Sign in to Marryshow's Mealhouse</CardTitle>
           <p className="text-gray-600 text-sm mt-2">Enter your credentials to access your account</p>

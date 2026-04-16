@@ -5,15 +5,11 @@ require_once __DIR__ . '/../utils/Security.php';
 require_once __DIR__ . '/../models/User.php';
 
 // Load Composer autoloader for Google Client
-$composerAutoload = __DIR__ . '/../vendor/autoload.php';
-if (file_exists($composerAutoload)) {
-    require_once $composerAutoload;
-} else {
     $composerAutoload = __DIR__ . '/../../vendor/autoload.php';
     if (file_exists($composerAutoload)) {
         require_once $composerAutoload;
     }
-}
+
 
 class AuthController {
     private $userModel;

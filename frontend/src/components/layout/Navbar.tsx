@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, User, Menu as MenuIcon, Wallet, LogOut, Heart, Bell, History } from 'lucide-react';
+import { ShoppingCart, User, Menu as MenuIcon, Wallet, LogOut, Heart, Bell, History, X } from 'lucide-react';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotifications } from '../../contexts/NotificationsContext';
@@ -12,7 +12,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-
 import logo from '../../assets/logo.png';
 
 export default function Navbar() {
@@ -25,6 +24,7 @@ export default function Navbar() {
   const handleLogout = () => {
     logout();
     navigate('/');
+    setMobileMenuOpen(false);
   };
 
   return (
@@ -33,10 +33,10 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <img 
-              src={logo} 
-              alt="MarryShow's Mealhouse" 
-              className="h-12 md:h-16 w-auto object-contain" 
+            <img
+              src={logo}
+              alt="MarryShow's Mealhouse"
+              className="h-12 md:h-16 w-auto object-contain"
             />
           </Link>
 
@@ -144,40 +144,145 @@ export default function Navbar() {
               variant="ghost"
               size="icon"
               className="md:hidden"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              onClick={() => setMobileMenuOpen(true)}
             >
               <MenuIcon className="w-5 h-5" />
             </Button>
           </div>
         </div>
+      </div>
 
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden pb-4">
-            <nav className="flex flex-col space-y-2">
-              <Link to="/" className="text-gray-700 hover:text-[#074af2] py-2" onClick={() => setMobileMenuOpen(false)}>Home</Link>
-              <Link to="/menu" className="text-gray-700 hover:text-[#074af2] py-2" onClick={() => setMobileMenuOpen(false)}>Menu</Link>
-              <Link to="/about" className="text-gray-700 hover:text-[#074af2] py-2" onClick={() => setMobileMenuOpen(false)}>About</Link>
-              <Link to="/help" className="text-gray-700 hover:text-[#074af2] py-2" onClick={() => setMobileMenuOpen(false)}>Help</Link>
-              <Link to="/contact" className="text-gray-700 hover:text-[#074af2] py-2" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
-              {user && (
-                <>
-                  <Link to="/profile" className="text-gray-700 hover:text-[#074af2] py-2" onClick={() => setMobileMenuOpen(false)}>Profile</Link>
-                  <Link to="/orders" className="text-gray-700 hover:text-[#074af2] py-2" onClick={() => setMobileMenuOpen(false)}>Order History</Link>
-                  <Link to="/favorites" className="text-gray-700 hover:text-[#074af2] py-2" onClick={() => setMobileMenuOpen(false)}>Favorites</Link>
-                  <Link to="/notifications" className="text-gray-700 hover:text-[#074af2] py-2" onClick={() => setMobileMenuOpen(false)}>Notifications</Link>
-                  <Link to="/wallet" className="text-gray-700 hover:text-[#074af2] py-2" onClick={() => setMobileMenuOpen(false)}>Wallet</Link>
-                  {user.role === 'staff' && (
-                    <Link to="/staff" className="text-gray-700 hover:text-[#074af2] py-2" onClick={() => setMobileMenuOpen(false)}>Staff Dashboard</Link>
-                  )}
-                  {user.role === 'admin' && (
-                    <Link to="/admin" className="text-gray-700 hover:text-[#074af2] py-2" onClick={() => setMobileMenuOpen(false)}>Admin Dashboard</Link>
-                  )}
-                </>
-              )}
-            </nav>
+      {/* Mobile Menu – slide‑in overlay */}
+      <div
+        className={`fixed inset-0 z-50 md:hidden transition-all duration-300 ${
+          mobileMenuOpen ? 'visible' : 'invisible'
+        }`}
+      >
+        {/* Backdrop */}
+        <div
+          className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${
+            mobileMenuOpen ? 'opacity-100' : 'opacity-0'
+          }`}
+          onClick={() => setMobileMenuOpen(false)}
+        />
+        {/* Menu panel */}
+        <div
+          className={`absolute right-0 top-0 h-full w-80 bg-white shadow-xl transition-transform duration-300 ${
+            mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+        >
+          <div className="flex justify-between items-center p-4 border-b">
+            <img src={logo} alt="Logo" className="h-8 w-auto" />
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-2 rounded-full hover:bg-gray-100"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
-        )}
+          <nav className="flex flex-col p-4 space-y-3">
+            <Link
+              to="/"
+              className="text-gray-700 hover:text-[#074af2] py-2 text-lg font-medium"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Home
+            </Link>
+            <Link
+              to="/menu"
+              className="text-gray-700 hover:text-[#074af2] py-2 text-lg font-medium"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Menu
+            </Link>
+            <Link
+              to="/about"
+              className="text-gray-700 hover:text-[#074af2] py-2 text-lg font-medium"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              About
+            </Link>
+            <Link
+              to="/help"
+              className="text-gray-700 hover:text-[#074af2] py-2 text-lg font-medium"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Help
+            </Link>
+            <Link
+              to="/contact"
+              className="text-gray-700 hover:text-[#074af2] py-2 text-lg font-medium"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Contact
+            </Link>
+            {user && (
+              <>
+                <div className="h-px bg-gray-200 my-2" />
+                <Link
+                  to="/profile"
+                  className="text-gray-700 hover:text-[#074af2] py-2 text-lg font-medium"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Profile
+                </Link>
+                <Link
+                  to="/orders"
+                  className="text-gray-700 hover:text-[#074af2] py-2 text-lg font-medium"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Order History
+                </Link>
+                <Link
+                  to="/favorites"
+                  className="text-gray-700 hover:text-[#074af2] py-2 text-lg font-medium"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Favorites
+                </Link>
+                <Link
+                  to="/notifications"
+                  className="text-gray-700 hover:text-[#074af2] py-2 text-lg font-medium"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Notifications
+                </Link>
+                <Link
+                  to="/wallet"
+                  className="text-gray-700 hover:text-[#074af2] py-2 text-lg font-medium"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Wallet
+                </Link>
+                {user.role === 'staff' && (
+                  <Link
+                    to="/staff"
+                    className="text-gray-700 hover:text-[#074af2] py-2 text-lg font-medium"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Staff Dashboard
+                  </Link>
+                )}
+                {user.role === 'admin' && (
+                  <Link
+                    to="/admin"
+                    className="text-gray-700 hover:text-[#074af2] py-2 text-lg font-medium"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Admin Dashboard
+                  </Link>
+                )}
+                <div className="h-px bg-gray-200 my-2" />
+                <button
+                  onClick={handleLogout}
+                  className="text-left text-red-600 hover:text-red-700 py-2 text-lg font-medium"
+                >
+                  Logout
+                </button>
+              </>
+            )}
+          </nav>
+        </div>
       </div>
     </header>
   );

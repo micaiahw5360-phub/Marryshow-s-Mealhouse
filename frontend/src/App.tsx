@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from "./components/ui/sonner";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
+import { useEffect, useState } from 'react'; // ✅ Added for PWA install button
 import { PublicLayout } from './components/layout/PublicLayout';
 import { AdminLayout } from './components/layout/AdminLayout';
 import { StaffLayout } from './components/layout/StaffLayout';
@@ -13,7 +14,7 @@ import { KioskMenu } from './pages/kiosk/KioskMenu';
 import { KioskCart } from './pages/kiosk/KioskCart';
 import { KioskCheckout } from './pages/kiosk/KioskCheckout';
 import { KioskGetUser } from './pages/kiosk/KioskGetUser';
-import { KioskOrderConfirmation } from './pages/kiosk/KioskOrderConfirmation'; // ✅ kiosk‑specific confirmation
+import { KioskOrderConfirmation } from './pages/kiosk/KioskOrderConfirmation';
 import { Login } from './pages/auth/Login';
 import { Register } from './pages/auth/Register';
 import { ForgotPassword } from './pages/auth/ForgotPassword';
@@ -48,7 +49,7 @@ import { useKiosk } from './contexts/KioskContext';
 
 const queryClient = new QueryClient();
 
-// Route guards
+// Route guards (unchanged)
 const KioskRouteGuard = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
   const { isKioskMode } = useKiosk();
@@ -76,6 +77,31 @@ const StaffRouteGuard = ({ children }: { children: React.ReactNode }) => {
 };
 
 function App() {
+  // PWA install button logic
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showInstallButton, setShowInstallButton] = useState(false);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallButton(true);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstall = () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choice: { outcome: string }) => {
+      if (choice.outcome === 'accepted') console.log('User accepted installation');
+      else console.log('User dismissed installation');
+      setDeferredPrompt(null);
+      setShowInstallButton(false);
+    });
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <GlobalLoader />
@@ -122,7 +148,7 @@ function App() {
             <Route index element={<StaffDashboard />} />
           </Route>
 
-          {/* Kiosk routes – no order history or favorites */}
+          {/* Kiosk routes */}
           <Route path="/kiosk" element={<KioskRouteGuard><KioskLayout /></KioskRouteGuard>}>
             <Route index element={<KioskLanding />} />
             <Route path="categories" element={<KioskCategories />} />
@@ -130,13 +156,22 @@ function App() {
             <Route path="cart" element={<KioskCart />} />
             <Route path="get-user" element={<KioskGetUser />} />
             <Route path="checkout" element={<KioskCheckout />} />
-            {/* ✅ Use kiosk‑specific confirmation with printable receipt */}
             <Route path="order-confirmation" element={<KioskOrderConfirmation />} />
           </Route>
 
           {/* 404 */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+
+        {/* PWA Install Button – floats at bottom right */}
+        {showInstallButton && (
+          <button
+            onClick={handleInstall}
+            className="fixed bottom-4 right-4 z-50 bg-[#074af2] text-white px-4 py-2 rounded-full shadow-lg hover:bg-[#0639c0] transition-colors flex items-center gap-2"
+          >
+            📱 Install App
+          </button>
+        )}
       </BrowserRouter>
     </QueryClientProvider>
   );

@@ -16,7 +16,8 @@ import {
 import { adminService } from '../../services/api';
 import { toast } from '../../utils/toastWithSound';
 
-const categories = ['Breakfast', 'A La Carte', 'Combo', 'Beverage', 'Dessert'];
+// ✅ Added 'Lunch' to categories
+const categories = ['Breakfast', 'Lunch', 'A La Carte', 'Combo', 'Beverage', 'Dessert'];
 
 export function AddMenuItem() {
   const navigate = useNavigate();
@@ -73,9 +74,7 @@ export function AddMenuItem() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="name">
-                Item Name <span className="text-red-500">*</span>
-              </Label>
+              <Label htmlFor="name">Item Name <span className="text-red-500">*</span></Label>
               <Input
                 id="name"
                 value={formData.name}
@@ -86,13 +85,8 @@ export function AddMenuItem() {
             </div>
 
             <div>
-              <Label htmlFor="category">
-                Category <span className="text-red-500">*</span>
-              </Label>
-              <Select
-                value={formData.category}
-                onValueChange={(value) => setFormData({ ...formData, category: value })}
-              >
+              <Label htmlFor="category">Category <span className="text-red-500">*</span></Label>
+              <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
@@ -107,9 +101,7 @@ export function AddMenuItem() {
             </div>
 
             <div>
-              <Label htmlFor="price">
-                Price ($) <span className="text-red-500">*</span>
-              </Label>
+              <Label htmlFor="price">Price ($) <span className="text-red-500">*</span></Label>
               <Input
                 id="price"
                 type="number"
@@ -131,9 +123,7 @@ export function AddMenuItem() {
                 onChange={(e) => setFormData({ ...formData, image: e.target.value })}
                 placeholder="https://example.com/image.jpg"
               />
-              <p className="text-xs text-gray-500 mt-1">
-                Enter a URL for the item image (optional)
-              </p>
+              <p className="text-xs text-gray-500 mt-1">Enter a URL for the item image (optional)</p>
             </div>
 
             <div>
@@ -151,9 +141,7 @@ export function AddMenuItem() {
               <Button type="submit" className="bg-[#074af2] hover:bg-[#0639c0]" disabled={loading}>
                 {loading ? 'Adding...' : 'Add Menu Item'}
               </Button>
-              <Button type="button" variant="outline" onClick={() => navigate('/admin/menu')}>
-                Cancel
-              </Button>
+              <Button type="button" variant="outline" onClick={() => navigate('/admin/menu')}>Cancel</Button>
             </div>
           </form>
         </CardContent>

@@ -1,4 +1,4 @@
-// ManageMenu.tsx – with persistent filters & stable layout
+// ManageMenu.tsx – with Lunch category & category colours
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { Plus, Edit, Trash2, Settings, Search, ArrowUpDown, X } from 'lucide-react';
@@ -23,21 +23,30 @@ import {
 import { adminService } from '../../services/api';
 import { toast } from '../../utils/toastWithSound';
 
-const categories = ['All', 'Breakfast', 'A La Carte', 'Combo', 'Beverage', 'Dessert'];
+// ✅ Added 'Lunch' to categories
+const categories = ['All', 'Breakfast', 'Lunch', 'A La Carte', 'Combo', 'Beverage', 'Dessert'];
+
+// ✅ Category colour mapping for badges
+const categoryColors: Record<string, string> = {
+  Breakfast: 'bg-amber-100 text-amber-800',
+  Lunch: 'bg-emerald-100 text-emerald-800',
+  'A La Carte': 'bg-blue-100 text-blue-800',
+  Combo: 'bg-purple-100 text-purple-800',
+  Beverage: 'bg-sky-100 text-sky-800',
+  Dessert: 'bg-pink-100 text-pink-800',
+};
 
 export function ManageMenu() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Get filter/sort from URL or use defaults
   const [searchTerm, setSearchTerm] = useState(() => searchParams.get('search') || '');
   const [categoryFilter, setCategoryFilter] = useState(() => searchParams.get('category') || 'All');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>(() => 
     (searchParams.get('sort') as 'asc' | 'desc') || 'asc'
   );
 
-  // Update URL when filters change
   useEffect(() => {
     const params = new URLSearchParams();
     if (searchTerm) params.set('search', searchTerm);
@@ -85,20 +94,15 @@ export function ManageMenu() {
     setSortOrder('asc');
   };
 
-  // Filtering logic
   const filteredItems = items.filter((item) => {
     const matchesCategory = categoryFilter === 'All' || item.category === categoryFilter;
     const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
-  // Sorting logic
   const sortedItems = [...filteredItems].sort((a, b) => {
-    if (sortOrder === 'asc') {
-      return a.name.localeCompare(b.name);
-    } else {
-      return b.name.localeCompare(a.name);
-    }
+    if (sortOrder === 'asc') return a.name.localeCompare(b.name);
+    else return b.name.localeCompare(a.name);
   });
 
   if (loading) return <div className="text-center py-20">Loading menu items...</div>;
@@ -120,7 +124,6 @@ export function ManageMenu() {
         </Link>
       </div>
 
-      {/* Filters & Sorting Card */}
       <Card>
         <CardHeader>
           <CardTitle>Filter & Sort Menu</CardTitle>
@@ -150,11 +153,7 @@ export function ManageMenu() {
               </SelectContent>
             </Select>
 
-            <Button
-              variant="outline"
-              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-              className="gap-2"
-            >
+            <Button variant="outline" onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')} className="gap-2">
               <ArrowUpDown className="w-4 h-4" />
               Sort {sortOrder === 'asc' ? 'A → Z' : 'Z → A'}
             </Button>
@@ -169,7 +168,6 @@ export function ManageMenu() {
         </CardContent>
       </Card>
 
-      {/* Menu Items Table - with stable layout */}
       <Card>
         <CardHeader>
           <CardTitle>
@@ -207,9 +205,7 @@ export function ManageMenu() {
                             src={item.image || '/placeholder.jpg'}
                             alt={item.name}
                             className="w-full h-full object-cover"
-                            onError={(e) => {
-                              (e.currentTarget as HTMLImageElement).src = '/placeholder.jpg';
-                            }}
+                            onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/placeholder.jpg'; }}
                           />
                         </div>
                       </TableCell>
@@ -217,14 +213,13 @@ export function ManageMenu() {
                         <div>
                           <p className="font-medium">{item.name}</p>
                           {item.description && (
-                            <p className="text-sm text-gray-500 line-clamp-1 max-w-md">
-                              {item.description}
-                            </p>
+                            <p className="text-sm text-gray-500 line-clamp-1 max-w-md">{item.description}</p>
                           )}
                         </div>
                       </TableCell>
                       <TableCell className="align-middle">
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 whitespace-nowrap">
+                        {/* ✅ Category badge with dynamic colour */}
+                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${categoryColors[item.category] || 'bg-gray-100 text-gray-800'}`}>
                           {item.category}
                         </span>
                       </TableCell>
@@ -233,9 +228,7 @@ export function ManageMenu() {
                       </TableCell>
                       <TableCell className="align-middle">
                         {item.options && item.options.length > 0 ? (
-                          <span className="text-sm text-gray-600">
-                            {item.options.length} option(s)
-                          </span>
+                          <span className="text-sm text-gray-600">{item.options.length} option(s)</span>
                         ) : (
                           <span className="text-sm text-gray-400">None</span>
                         )}
@@ -252,12 +245,7 @@ export function ManageMenu() {
                               <Edit className="w-4 h-4" />
                             </Button>
                           </Link>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => handleDelete(item.id)}
-                            title="Delete"
-                          >
+                          <Button size="sm" variant="ghost" onClick={() => handleDelete(item.id)} title="Delete">
                             <Trash2 className="w-4 h-4 text-red-500" />
                           </Button>
                         </div>

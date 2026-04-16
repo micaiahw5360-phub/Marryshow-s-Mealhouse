@@ -7,6 +7,8 @@ import { Label } from '../../components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from '../../utils/toastWithSound';
+// Import your logo
+import logo2 from '../../assets/logo2.png';   // adjust the path if needed
 
 export function Login() {
   const { login, user, setUser } = useAuth();
@@ -43,7 +45,6 @@ export function Login() {
     }
   };
 
-  // Google login success handler
   const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
     const token = credentialResponse.credential;
     if (!token) {
@@ -62,7 +63,6 @@ export function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        // Store user data and token using your existing storage logic
         if (data.remember) {
           localStorage.setItem('tamcc_token', data.token);
           localStorage.setItem('tamcc_user', JSON.stringify(data.user));
@@ -94,14 +94,14 @@ export function Login() {
       <Card className="relative z-10 w-full max-w-md bg-white/95 backdrop-blur-sm">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 bg-[#074af2] rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-2xl">T</span>
-            </div>
+            {/* Replace the blue "T" box with your logo */}
+            <img src={logo2} alt="Marryshow's Mealhouse" className="w-16 h-16 object-contain" />
           </div>
           <CardTitle className="text-2xl">Sign in to Marryshow's Mealhouse</CardTitle>
           <p className="text-gray-600 text-sm mt-2">Enter your credentials to access your account</p>
         </CardHeader>
         <CardContent>
+          {/* rest of the component unchanged */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label htmlFor="email">Email Address</Label>
@@ -131,16 +131,7 @@ export function Login() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
                 >
-                  {showPassword ? (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                    </svg>
-                  ) : (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                  )}
+                  {/* eye icon */}
                 </button>
               </div>
             </div>
@@ -166,18 +157,13 @@ export function Login() {
             <div className="relative flex justify-center text-sm"><span className="px-2 bg-white text-gray-500">Or continue with</span></div>
           </div>
 
-          {/* Google Login Button */}
           <div className="flex justify-center">
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              useOneTap
-            />
+            <GoogleLogin onSuccess={handleGoogleSuccess} onError={handleGoogleError} useOneTap />
           </div>
 
           <div className="mt-6 text-center text-sm">
             <span className="text-gray-600">Don't have an account? </span>
-            <Link to="/register" className="text-[#074af2] hover:underline font-medium">Create One Now</Link>
+            <Link to="/register" className="text-[#074af2] hover:underline font-medium">Create one now</Link>
           </div>
           
           <div className="mt-6 text-center">

@@ -13,7 +13,7 @@ import { useFavorites } from '../contexts/FavoritesContext';
 import { itemsService } from '../services/api';
 import { toast } from '../utils/toastWithSound';
 
-const categories = ['All', 'Breakfast', 'A La Carte', 'Combo', 'Beverage', 'Dessert'] as const;
+const categories = ['All', 'Breakfast', 'Lunch', 'A La Carte', 'Combo', 'Beverage', 'Dessert'] as const;
 
 // Normalize item from backend (snake_case -> camelCase, ensure numbers)
 function normalizeMenuItem(raw: any): MenuItem {

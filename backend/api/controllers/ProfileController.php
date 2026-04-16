@@ -81,48 +81,52 @@ class ProfileController {
     }
 
     public function uploadAvatar() {
-    $userId = $this->getUserId();
-    if (!$userId) Response::send(401, ['error' => 'Unauthorized']);
-    
-    if (!isset($_FILES['avatar']) || $_FILES['avatar']['error'] !== UPLOAD_ERR_OK) {
-        Response::send(400, ['error' => 'No valid file uploaded']);
-    }
-    
-    $file = $_FILES['avatar'];
-    $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    if (!in_array($file['type'], $allowed)) {
-        Response::send(400, ['error' => 'Only JPG, PNG, GIF, WEBP allowed']);
-    }
-    if ($file['size'] > 2 * 1024 * 1024) {
-        Response::send(400, ['error' => 'File too large (max 2MB)']);
-    }
-    
-    $uploadDir = __DIR__ . '/../../uploads/avatars/';
-    if (!is_dir($uploadDir)) {
-        if (!mkdir($uploadDir, 0777, true)) {
-            Response::send(500, ['error' => 'Failed to create upload directory']);
+        $userId = $this->getUserId();
+        if (!$userId) Response::send(401, ['error' => 'Unauthorized']);
+
+        if (!isset($_FILES['avatar']) || $_FILES['avatar']['error'] !== UPLOAD_ERR_OK) {
+            Response::send(400, ['error' => 'No valid file uploaded']);
+        }
+
+        $file = $_FILES['avatar'];
+        $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (!in_array($file['type'], $allowed)) {
+            Response::send(400, ['error' => 'Only JPG, PNG, GIF, WEBP allowed']);
+        }
+        if ($file['size'] > 2 * 1024 * 1024) {
+            Response::send(400, ['error' => 'File too large (max 2MB)']);
+        }
+
+        // Use a directory inside backend (writable on most hosts)
+        $uploadDir = __DIR__ . '/../uploads/avatars/';
+        if (!is_dir($uploadDir)) {
+            if (!mkdir($uploadDir, 0755, true)) {
+                Response::send(500, ['error' => 'Failed to create upload directory. Check permissions.']);
+            }
+        }
+
+        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $filename = 'user_' . $userId . '_' . time() . '.' . $ext;
+        $targetPath = $uploadDir . $filename;
+
+        if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+            // Build URL – adjust base path to match your public entry point
+            // Assuming your API entry point is at /backend/api/index.php
+            $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
+            $host = $_SERVER['HTTP_HOST'];
+            // Remove any subfolder if needed – adjust this to match your actual public path
+            $baseUrl = $protocol . $host . '/MarryShow-Mealhouse/backend';
+            $avatarUrl = $baseUrl . '/uploads/avatars/' . $filename;
+
+            $result = $this->userModel->updateAvatar($userId, $avatarUrl);
+            if (!$result) {
+                Response::send(500, ['error' => 'Failed to update avatar in database']);
+            }
+            Response::send(200, ['avatarUrl' => $avatarUrl]);
+        } else {
+            Response::send(500, ['error' => 'Failed to move uploaded file']);
         }
     }
-    
-    $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-    $filename = 'user_' . $userId . '_' . time() . '.' . $ext;
-    $targetPath = $uploadDir . $filename;
-    
-    if (move_uploaded_file($file['tmp_name'], $targetPath)) {
-        // Build full absolute URL
-        $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
-        $baseUrl = $protocol . $_SERVER['HTTP_HOST'] . '/MarryShow-Mealhouse/backend';
-        $avatarUrl = $baseUrl . '/uploads/avatars/' . $filename;
-        
-        $result = $this->userModel->updateAvatar($userId, $avatarUrl);
-        if (!$result) {
-            Response::send(500, ['error' => 'Failed to update avatar in database']);
-        }
-        Response::send(200, ['avatarUrl' => $avatarUrl]);
-    } else {
-        Response::send(500, ['error' => 'Failed to move uploaded file']);
-    }
-}
 
     public function getNotificationPrefs() {
         $userId = $this->getUserId();

@@ -1,82 +1,124 @@
 import { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X, Info, CreditCard, Utensils, Smartphone, Coffee } from 'lucide-react';
 import { Button } from './ui/button';
 
 interface PromoBanner {
   id: string;
   message: string;
-  bgColor: string;
-  textColor: string;
+  icon?: React.ReactNode;
   ctaText?: string;
   ctaLink?: string;
 }
 
 const promos: PromoBanner[] = [
   {
-    id: 'promo-1',
-    message: '🎉 Welcome to Marryshow\'s Mealhouse. Skip the lines and order online! 🎉',
-    bgColor: 'bg-gradient-to-r from-red-500 to-green-500 to-yellow-500',
-    textColor: 'text-white',
+    id: 'welcome',
+    message: '🎉 Welcome to Marryshow\'s Mealhouse! Order online and skip the lines. 🎉',
+    icon: <Utensils className="w-4 h-4 mr-2" />,
     ctaText: 'Order Now',
     ctaLink: '/menu',
   },
   {
-    id: 'promo-2',
-    message: '💳 Instead of using cash, pay with you Marryshow card for a faster checkout! 💳',
-    bgColor: 'bg-gradient-to-r from-black-500 to-gold-500',
-    textColor: 'text-white',
+    id: 'wallet',
+    message: '💳 Pay faster with your Marryshow Card – no cash, no hassle! 💳',
+    icon: <CreditCard className="w-4 h-4 mr-2" />,
+    ctaText: 'Learn More',
+    ctaLink: '/wallet',
+  },
+  {
+    id: 'kiosk',
+    message: '🖥️ Use our touch‑screen kiosk for quick self‑service ordering!',
+    icon: <Smartphone className="w-4 h-4 mr-2" />,
+    ctaText: 'How It Works',
+    ctaLink: '/help',
+  },
+  {
+    id: 'loyalty',
+    message: '⭐ Earn 5% cashback when you pay with your Marryshow Wallet!',
+    icon: <Coffee className="w-4 h-4 mr-2" />,
     ctaText: 'View Wallet',
     ctaLink: '/wallet',
+  },
+  {
+    id: 'faq',
+    message: '❓ New here? Check our FAQs to get the most out of your experience.',
+    icon: <Info className="w-4 h-4 mr-2" />,
+    ctaText: 'FAQs',
+    ctaLink: '/help',
   },
 ];
 
 export function PromoBanner() {
-  const [currentPromo, setCurrentPromo] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
-  const [dismissed, setDismissed] = useState<string[]>(() => {
+  const [fade, setFade] = useState(false);
+  const [dismissedIds, setDismissedIds] = useState<string[]>(() => {
     const saved = localStorage.getItem('dismissed-promos');
     return saved ? JSON.parse(saved) : [];
   });
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentPromo((prev) => (prev + 1) % promos.length);
-    }, 10000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const promo = promos[currentPromo];
+  const currentPromo = promos[currentIndex];
+  const isDismissed = dismissedIds.includes(currentPromo?.id);
 
   useEffect(() => {
-    if (dismissed.includes(promo.id)) {
+    if (isDismissed) {
       setIsVisible(false);
     } else {
       setIsVisible(true);
     }
-  }, [promo.id, dismissed]);
+  }, [currentPromo, isDismissed]);
+
+  // Auto‑rotate every 10 seconds with fade transition
+  useEffect(() => {
+    if (!isVisible) return;
+    const interval = setInterval(() => {
+      setFade(true);
+      setTimeout(() => {
+        setCurrentIndex((prev) => (prev + 1) % promos.length);
+        setFade(false);
+      }, 300);
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [isVisible]);
 
   const handleDismiss = () => {
-    const newDismissed = [...dismissed, promo.id];
-    setDismissed(newDismissed);
+    const newDismissed = [...dismissedIds, currentPromo.id];
+    setDismissedIds(newDismissed);
     localStorage.setItem('dismissed-promos', JSON.stringify(newDismissed));
     setIsVisible(false);
   };
 
-  if (!isVisible) return null;
+  if (!isVisible || !currentPromo) return null;
 
   return (
-    <div className={`${promo.bgColor} ${promo.textColor} py-3 px-4 relative overflow-hidden`}>
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex-1 flex items-center justify-center space-x-4">
-          <p className="text-sm md:text-base font-medium">{promo.message}</p>
-          {promo.ctaText && promo.ctaLink && (
-            <a href={promo.ctaLink}>
+    <div
+      className={`
+        relative overflow-hidden transition-all duration-300
+        bg-gradient-to-r from-red-600 via-green-600 to-yellow-500
+        text-white py-3 px-4
+      `}
+    >
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+        <div className="flex-1 flex items-center justify-center gap-3">
+          <div className="hidden sm:flex items-center text-white/80">
+            {currentPromo.icon}
+          </div>
+          <p
+            className={`
+              text-sm md:text-base font-medium transition-opacity duration-300
+              ${fade ? 'opacity-0' : 'opacity-100'}
+            `}
+          >
+            {currentPromo.message}
+          </p>
+          {currentPromo.ctaText && currentPromo.ctaLink && (
+            <a href={currentPromo.ctaLink} className="hidden md:inline-block">
               <Button
                 size="sm"
                 variant="secondary"
-                className="hidden md:inline-flex"
+                className="bg-white/20 hover:bg-white/30 text-white border-none"
               >
-                {promo.ctaText}
+                {currentPromo.ctaText}
               </Button>
             </a>
           )}
@@ -84,16 +126,29 @@ export function PromoBanner() {
         <button
           onClick={handleDismiss}
           className="ml-4 p-1 hover:bg-white/20 rounded transition-colors"
+          aria-label="Dismiss banner"
         >
           <X className="h-4 w-4" />
         </button>
       </div>
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/30">
+
+      {/* Animated progress bar */}
+      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/30">
         <div
-          className="h-full bg-white/60 animate-[progress_5s_linear_infinite]"
-          style={{ width: '100%' }}
+          className="h-full bg-white/70 animate-progress"
+          style={{ animationDuration: '10s' }}
         />
       </div>
+
+      <style>{`
+        @keyframes progress {
+          from { width: 0%; }
+          to { width: 100%; }
+        }
+        .animate-progress {
+          animation: progress linear infinite;
+        }
+      `}</style>
     </div>
   );
 }

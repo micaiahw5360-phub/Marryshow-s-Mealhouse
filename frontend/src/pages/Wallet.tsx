@@ -371,7 +371,7 @@ export function Wallet() {
     setActiveModal('sendreceive');
   };
 
-  // NFC Card Tap Animation
+  // NFC Card Tap Animation (kept for compatibility, but card now uses different design)
   const handleCardTap = (e: React.MouseEvent) => {
     e.stopPropagation();
     const card = cardRef.current;
@@ -417,122 +417,152 @@ export function Wallet() {
   if (!user) return <div className="min-h-[60vh] flex items-center justify-center">Please login to access your wallet.</div>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-pink-50">
-      <div className="max-w-3xl mx-auto px-4 py-6">
-        {/* Header */}
-        <div className="sticky top-0 bg-white/80 backdrop-blur-sm border-b border-gray-200 -mx-4 px-5 py-4 mb-6 z-10">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-red-500 flex items-center justify-center">
-                <span className="text-white text-sm font-bold">M</span>
-              </div>
-              <div>
-                <h1 className="text-gray-900 font-bold text-lg">Marryshow Card</h1>
-                <p className="text-gray-500 text-xs">{cardStatus}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <Link to="/notifications" className="relative">
-                <Bell className="w-5 h-5 text-gray-600" />
-              </Link>
-              <Link to="/profile" className="cursor-pointer">
-                <Settings className="w-5 h-5 text-gray-600" />
-              </Link>
-            </div>
-          </div>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black py-8">
+      <div className="max-w-3xl mx-auto px-4">
+        {/* No header with bell/settings */}
 
-        {/* Main Card - NFC Interactive */}
-        <div 
+        {/* Main Card - New Dark/Gold VISA Design */}
+        <div
           ref={cardRef}
-          className="card-main rounded-3xl p-6 relative overflow-hidden text-white mb-6 cursor-pointer transition-all"
-          style={{ 
-            background: 'linear-gradient(135deg, #ff6b9d 0%, #c44569 50%, #f8b500 100%)',
-            boxShadow: '0 20px 50px rgba(255, 107, 157, 0.3)',
-            aspectRatio: '1.7/1',
-            perspective: '1000px'
+          className="card-main rounded-3xl p-6 relative overflow-hidden text-white mb-6 cursor-pointer transition-all duration-500 group"
+          style={{
+            aspectRatio: "1.7/1",
+            perspective: "1000px",
+            background: `
+              radial-gradient(circle at 15% 20%, rgba(255,215,120,0.15), transparent 25%),
+              radial-gradient(circle at 85% 80%, rgba(255,215,120,0.12), transparent 30%),
+              linear-gradient(135deg, #050505 0%, #111111 40%, #000000 100%)
+            `,
+            boxShadow: "0 25px 60px rgba(0,0,0,0.65), 0 0 25px rgba(212,175,55,0.12)",
+            border: "1px solid rgba(255,255,255,0.08)",
           }}
           onClick={handleCardTap}
         >
-          {/* NFC Pulse Indicator */}
-          <div className="absolute top-6 right-6 w-3 h-3 rounded-full bg-white/60 nfc-pulse-indicator"></div>
-          
-          {/* Ripple Effect */}
-          <div 
-            ref={rippleRef}
-            className="nfc-ripple-effect absolute inset-0 pointer-events-none"
-            style={{ display: 'none', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 'inherit' }}
-          ></div>
-          
-          {/* NFC Scan Effect */}
-          <div 
-            ref={scanRef}
-            className="nfc-scan-effect absolute inset-0 pointer-events-none"
-            style={{ display: 'none' }}
-          ></div>
-          
-          <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 400 240">
-            <circle cx="320" cy="60" r="120" fill="white" />
-            <circle cx="360" cy="100" r="80" fill="white" />
-          </svg>
-          
-          <div className="relative z-10 flex flex-col justify-between h-full">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-white/60 text-[10px] tracking-widest uppercase font-semibold">Available Balance</p>
-                <div className="flex items-baseline gap-1 mt-2">
-                  <span className="text-white/70 text-lg font-semibold">$</span>
-                  <span className="text-white text-4xl font-bold font-mono">{safeWalletBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+          {/* Gold flowing background */}
+          <div className="absolute inset-0 overflow-hidden">
+            <div
+              className="absolute -top-8 -left-10 w-[140%] h-20 rotate-[-8deg]"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent, rgba(212,175,55,0.95), rgba(255,224,130,0.7), transparent)",
+                filter: "blur(10px)",
+              }}
+            />
+            <div
+              className="absolute bottom-8 -right-10 w-[150%] h-16 rotate-[6deg]"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent, rgba(212,175,55,0.75), rgba(255,215,100,0.45), transparent)",
+                filter: "blur(12px)",
+              }}
+            />
+          </div>
+
+          {/* Decorative chains */}
+          <div className="absolute top-5 right-0 text-yellow-500/60 text-xl tracking-widest rotate-6">
+            ⛓ ⛓ ⛓
+          </div>
+          <div className="absolute bottom-5 left-0 text-yellow-500/50 text-lg -rotate-12">
+            ⛓ ⛓ ⛓
+          </div>
+
+          {/* Card Content */}
+          <div className="relative z-10 h-full flex flex-col justify-between">
+            {/* Top Row */}
+            <div className="flex justify-between items-start">
+              <h2 className="text-3xl font-extrabold tracking-wide text-white">
+                VISA
+              </h2>
+              <div className="text-3xl text-white/90">)))</div>
+            </div>
+
+            {/* Middle Section */}
+            <div>
+              {/* Chip */}
+              <div
+                className="w-14 h-10 rounded-lg mb-5"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #f9e27d 0%, #c89b2d 55%, #f5d76e 100%)",
+                  boxShadow: "inset 0 0 6px rgba(0,0,0,0.25)",
+                }}
+              />
+
+              {/* Numbers */}
+              <p
+                className="text-2xl md:text-3xl tracking-[0.25em] font-mono mb-3"
+                style={{ color: "#d4af37" }}
+              >
+                {user?.card_number ? user.card_number.slice(-4).padStart(16, '*') : '**** **** **** 0000'}
+              </p>
+
+              {/* Name + Date */}
+              <div className="flex justify-between items-end text-sm uppercase">
+                <div>
+                  <p className="text-white/50 text-[10px]">Card Holder</p>
+                  <p className="tracking-[0.2em] text-yellow-400 font-semibold">
+                    {user?.username?.toUpperCase() || 'MARRYSHOW CARD'}
+                  </p>
+                </div>
+
+                <div className="text-right">
+                  <p className="text-white/50 text-[10px]">Exp</p>
+                  <p className="text-yellow-400 tracking-widest">12/28</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <svg className="nfc-wave w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" opacity="0.7">
-                  <path d="M6 18.5a6 6 0 0 1 0-13" />
-                  <path d="M10 16a3.5 3.5 0 0 1 0-8" />
-                  <circle cx="14" cy="12" r="1" />
-                </svg>
-                <span className="text-white text-sm font-bold tracking-wider font-mono">VISA</span>
-              </div>
             </div>
-            <div className="flex items-end justify-between mt-6">
-              <div>
-                <div className="chip w-[42px] h-[32px] bg-gradient-to-br from-yellow-300 to-yellow-500 rounded-md relative overflow-hidden mb-3 shadow-md">
-                  <div className="absolute inset-[3px] border border-black/10 rounded-sm"></div>
-                  <div className="absolute left-1/2 top-[3px] bottom-[3px] w-[1.5px] bg-black/10"></div>
-                </div>
-                {/* Updated: Show actual card number instead of masked */}
-                <p className="text-white/80 text-xs tracking-wider font-mono">{user?.card_number || 'MC' + user.id.toString().padStart(8, '0')}</p>
-                <p className="text-white/70 text-[11px] mt-1.5 uppercase tracking-wider font-semibold">{user.username}</p>
-              </div>
-              <p className="text-white/60 text-[11px] font-mono">12/28</p>
+
+            {/* Balance Display (optional – can be placed elsewhere) */}
+            <div className="mt-4 pt-3 border-t border-white/20">
+              <p className="text-white/50 text-xs">Available Balance</p>
+              <p className="text-2xl font-bold text-yellow-400">
+                ${safeWalletBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              </p>
             </div>
+
+            {/* Bottom Logo */}
+            <div className="absolute bottom-4 right-5 text-right">
+              <p className="text-5xl font-black text-white leading-none">VISA</p>
+              <p className="text-xs text-white/60">Premium Black</p>
+            </div>
+          </div>
+
+          {/* Shine Hover Effect */}
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-700 pointer-events-none">
+            <div
+              className="absolute -left-1/2 top-0 h-full w-1/2 rotate-12"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)",
+              }}
+            />
           </div>
         </div>
 
         {/* Quick Actions Grid */}
         <div className="grid grid-cols-4 gap-3 mb-6">
-          <button onClick={() => setActiveModal('pay')} className="quick-action flex flex-col items-center gap-2 p-3 rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-200 shadow-sm">
-            <div className="w-11 h-11 rounded-xl bg-pink-100 flex items-center justify-center"><Utensils className="w-5 h-5 text-pink-600" /></div>
-            <span className="text-gray-700 text-[11px] font-semibold">Pay</span>
+          <button onClick={() => setActiveModal('pay')} className="quick-action flex flex-col items-center gap-2 p-3 rounded-2xl bg-white/10 backdrop-blur-sm border border-gray-700 shadow-sm hover:bg-white/20 transition">
+            <div className="w-11 h-11 rounded-xl bg-pink-900/30 flex items-center justify-center"><Utensils className="w-5 h-5 text-pink-400" /></div>
+            <span className="text-gray-300 text-[11px] font-semibold">Pay</span>
           </button>
-          <button onClick={() => setActiveModal('topup')} className="quick-action flex flex-col items-center gap-2 p-3 rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-200 shadow-sm">
-            <div className="w-11 h-11 rounded-xl bg-green-100 flex items-center justify-center"><PlusCircle className="w-5 h-5 text-green-600" /></div>
-            <span className="text-gray-700 text-[11px] font-semibold">Top Up</span>
+          <button onClick={() => setActiveModal('topup')} className="quick-action flex flex-col items-center gap-2 p-3 rounded-2xl bg-white/10 backdrop-blur-sm border border-gray-700 shadow-sm hover:bg-white/20 transition">
+            <div className="w-11 h-11 rounded-xl bg-green-900/30 flex items-center justify-center"><PlusCircle className="w-5 h-5 text-green-400" /></div>
+            <span className="text-gray-300 text-[11px] font-semibold">Top Up</span>
           </button>
-          <button onClick={() => { setIsRequestMode(false); setActiveModal('sendreceive'); }} className="quick-action flex flex-col items-center gap-2 p-3 rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-200 shadow-sm">
-            <div className="w-11 h-11 rounded-xl bg-blue-100 flex items-center justify-center"><ArrowRightLeft className="w-5 h-5 text-blue-600" /></div>
-            <span className="text-gray-700 text-[11px] font-semibold">Send/Req</span>
+          <button onClick={() => { setIsRequestMode(false); setActiveModal('sendreceive'); }} className="quick-action flex flex-col items-center gap-2 p-3 rounded-2xl bg-white/10 backdrop-blur-sm border border-gray-700 shadow-sm hover:bg-white/20 transition">
+            <div className="w-11 h-11 rounded-xl bg-blue-900/30 flex items-center justify-center"><ArrowRightLeft className="w-5 h-5 text-blue-400" /></div>
+            <span className="text-gray-300 text-[11px] font-semibold">Send/Req</span>
           </button>
-          <button onClick={() => setActiveModal('history')} className="quick-action flex flex-col items-center gap-2 p-3 rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-200 shadow-sm">
-            <div className="w-11 h-11 rounded-xl bg-amber-100 flex items-center justify-center"><Receipt className="w-5 h-5 text-amber-600" /></div>
-            <span className="text-gray-700 text-[11px] font-semibold">History</span>
+          <button onClick={() => setActiveModal('history')} className="quick-action flex flex-col items-center gap-2 p-3 rounded-2xl bg-white/10 backdrop-blur-sm border border-gray-700 shadow-sm hover:bg-white/20 transition">
+            <div className="w-11 h-11 rounded-xl bg-amber-900/30 flex items-center justify-center"><Receipt className="w-5 h-5 text-amber-400" /></div>
+            <span className="text-gray-300 text-[11px] font-semibold">History</span>
           </button>
         </div>
 
         {/* Wallet / Requests Tabs */}
-        <div className="flex gap-6 border-b-2 border-gray-200 mb-4">
-          <button onClick={() => setActiveView('wallet')} className={`pb-2 font-semibold text-sm ${activeView === 'wallet' ? 'tab-active text-pink-600 border-b-3 border-pink-600' : 'text-gray-500'}`}>Wallet</button>
-          <button onClick={() => { setActiveView('requests'); loadPendingRequests(); }} className={`pb-2 font-semibold text-sm ${activeView === 'requests' ? 'tab-active text-pink-600 border-b-3 border-pink-600' : 'text-gray-500'}`}>
+        <div className="flex gap-6 border-b border-gray-700 mb-4">
+          <button onClick={() => setActiveView('wallet')} className={`pb-2 font-semibold text-sm ${activeView === 'wallet' ? 'text-yellow-400 border-b-2 border-yellow-400' : 'text-gray-400'}`}>Wallet</button>
+          <button onClick={() => { setActiveView('requests'); loadPendingRequests(); }} className={`pb-2 font-semibold text-sm ${activeView === 'requests' ? 'text-yellow-400 border-b-2 border-yellow-400' : 'text-gray-400'}`}>
             Requests {pendingRequests.length > 0 && `(${pendingRequests.length})`}
           </button>
         </div>
@@ -541,29 +571,29 @@ export function Wallet() {
           <>
             {/* Transactions Section */}
             <div className="mb-6">
-              <div className="flex gap-6 border-b-2 border-gray-200 mb-4">
-                <button onClick={() => setCurrentTab('all')} className={`pb-2 text-gray-700 font-semibold text-sm ${currentTab === 'all' ? 'tab-active text-pink-600 border-b-3 border-pink-600' : 'text-gray-500'}`}>All</button>
-                <button onClick={() => setCurrentTab('dining')} className={`pb-2 text-gray-700 font-semibold text-sm ${currentTab === 'dining' ? 'tab-active text-pink-600 border-b-3 border-pink-600' : 'text-gray-500'}`}>🍽️ Dining</button>
-                <button onClick={() => setCurrentTab('transfers')} className={`pb-2 text-gray-700 font-semibold text-sm ${currentTab === 'transfers' ? 'tab-active text-pink-600 border-b-3 border-pink-600' : 'text-gray-500'}`}>📤 Transfers</button>
+              <div className="flex gap-6 border-b border-gray-700 mb-4">
+                <button onClick={() => setCurrentTab('all')} className={`pb-2 text-sm font-semibold ${currentTab === 'all' ? 'text-yellow-400 border-b-2 border-yellow-400' : 'text-gray-400'}`}>All</button>
+                <button onClick={() => setCurrentTab('dining')} className={`pb-2 text-sm font-semibold ${currentTab === 'dining' ? 'text-yellow-400 border-b-2 border-yellow-400' : 'text-gray-400'}`}>🍽️ Dining</button>
+                <button onClick={() => setCurrentTab('transfers')} className={`pb-2 text-sm font-semibold ${currentTab === 'transfers' ? 'text-yellow-400 border-b-2 border-yellow-400' : 'text-gray-400'}`}>📤 Transfers</button>
               </div>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-gray-900 font-bold text-sm">Recent Activity</h3>
-                <button onClick={() => setActiveModal('history')} className="text-xs font-semibold text-pink-600 hover:text-pink-700">See All →</button>
+                <h3 className="text-white font-bold text-sm">Recent Activity</h3>
+                <button onClick={() => setActiveModal('history')} className="text-xs font-semibold text-yellow-400 hover:text-yellow-300">See All →</button>
               </div>
               <div className="flex flex-col gap-2.5">
                 {loading ? (
-                  <div className="text-center py-8 text-gray-500">Loading transactions...</div>
+                  <div className="text-center py-8 text-gray-400">Loading transactions...</div>
                 ) : filteredTransactions.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">No transactions yet</div>
+                  <div className="text-center py-8 text-gray-400">No transactions yet</div>
                 ) : (
                   filteredTransactions.slice(0, 5).map((tx, i) => (
-                    <div key={tx.id} className="tx-item bg-white rounded-2xl p-3.5 border border-gray-200 flex items-center gap-3" style={{ animationDelay: `${i * 0.06}s` }}>
-                      <div className="w-11 h-11 rounded-xl flex items-center justify-center text-lg bg-gray-100">{tx.emoji}</div>
+                    <div key={tx.id} className="tx-item bg-white/5 rounded-2xl p-3.5 border border-gray-800 flex items-center gap-3" style={{ animationDelay: `${i * 0.06}s` }}>
+                      <div className="w-11 h-11 rounded-xl flex items-center justify-center text-lg bg-gray-800">{tx.emoji}</div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-gray-900 text-sm font-semibold truncate">{tx.description}</p>
-                        <p className="text-gray-500 text-[11px] mt-0.5">{tx.timeStr}</p>
+                        <p className="text-white text-sm font-semibold truncate">{tx.description}</p>
+                        <p className="text-gray-400 text-[11px] mt-0.5">{tx.timeStr}</p>
                       </div>
-                      <span className={`text-sm font-bold font-mono ${tx.type === 'credit' ? 'text-green-600' : 'text-gray-700'}`}>
+                      <span className={`text-sm font-bold font-mono ${tx.type === 'credit' ? 'text-green-400' : 'text-gray-300'}`}>
                         {tx.type === 'credit' ? '+' : '-'}${Math.abs(tx.amount).toFixed(2)}
                       </span>
                     </div>
@@ -572,20 +602,18 @@ export function Wallet() {
               </div>
             </div>
 
-            {/* REMOVED: "Your Cards" section entirely */}
-
             {/* Quick Contacts */}
             <div className="mb-8">
-              <h3 className="text-gray-900 font-bold text-sm mb-4">Quick Send To</h3>
+              <h3 className="text-white font-bold text-sm mb-4">Quick Send To</h3>
               <div className="grid grid-cols-2 gap-3">
                 {quickContacts.length === 0 ? (
-                  <p className="col-span-2 text-gray-500 text-xs text-center py-4">Send or request money to add contacts here</p>
+                  <p className="col-span-2 text-gray-400 text-xs text-center py-4">Send or request money to add contacts here</p>
                 ) : (
                   quickContacts.map((contact, idx) => (
-                    <button key={idx} onClick={() => quickSendTo(contact)} className="rounded-2xl bg-white border border-gray-200 p-3.5 hover:shadow-md transition text-left quick-action">
-                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center text-lg mb-2">👤</div>
-                      <p className="text-gray-900 font-semibold text-sm truncate">{contact.name}</p>
-                      <p className="text-gray-500 text-xs mt-1">Quick send</p>
+                    <button key={idx} onClick={() => quickSendTo(contact)} className="rounded-2xl bg-white/5 border border-gray-800 p-3.5 hover:bg-white/10 transition text-left quick-action">
+                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-900/50 to-purple-900/50 flex items-center justify-center text-lg mb-2">👤</div>
+                      <p className="text-white font-semibold text-sm truncate">{contact.name}</p>
+                      <p className="text-gray-400 text-xs mt-1">Quick send</p>
                     </button>
                   ))
                 )}
@@ -597,20 +625,20 @@ export function Wallet() {
           <div className="mb-8">
             <div className="space-y-3">
               {pendingRequests.length === 0 ? (
-                <p className="text-center text-gray-500 py-8">No pending requests</p>
+                <p className="text-center text-gray-400 py-8">No pending requests</p>
               ) : (
                 pendingRequests.map(req => (
-                  <div key={req.id} className="bg-white rounded-2xl p-4 border border-gray-200">
+                  <div key={req.id} className="bg-white/5 rounded-2xl p-4 border border-gray-800">
                     <div className="flex justify-between items-start">
                       <div>
-                        <p className="font-semibold">{req.requester_name} requested</p>
-                        <p className="text-2xl font-bold text-gray-900">${parseFloat(req.amount).toFixed(2)}</p>
-                        {req.note && <p className="text-sm text-gray-500 mt-1">Note: {req.note}</p>}
-                        <p className="text-xs text-gray-400 mt-1">{new Date(req.created_at).toLocaleString()}</p>
+                        <p className="font-semibold text-white">{req.requester_name} requested</p>
+                        <p className="text-2xl font-bold text-yellow-400">${parseFloat(req.amount).toFixed(2)}</p>
+                        {req.note && <p className="text-sm text-gray-400 mt-1">Note: {req.note}</p>}
+                        <p className="text-xs text-gray-500 mt-1">{new Date(req.created_at).toLocaleString()}</p>
                       </div>
                       <div className="flex gap-2">
-                        <button onClick={() => handleAcceptRequest(req.id)} className="px-4 py-2 bg-green-600 text-white rounded-xl text-sm font-semibold">Accept</button>
-                        <button onClick={() => handleRejectRequest(req.id)} className="px-4 py-2 bg-red-600 text-white rounded-xl text-sm font-semibold">Reject</button>
+                        <button onClick={() => handleAcceptRequest(req.id)} className="px-4 py-2 bg-green-600 text-white rounded-xl text-sm font-semibold hover:bg-green-700 transition">Accept</button>
+                        <button onClick={() => handleRejectRequest(req.id)} className="px-4 py-2 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition">Reject</button>
                       </div>
                     </div>
                   </div>
@@ -625,23 +653,23 @@ export function Wallet() {
 
       {/* Pay Modal */}
       {activeModal === 'pay' && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setActiveModal(null)}>
-          <div className="bg-white rounded-3xl w-full max-w-md p-6 mx-4" onClick={(e) => e.stopPropagation()}>
-            <div className="w-10 h-1 rounded-full bg-gray-300 mx-auto mb-5"></div>
-            <h3 className="text-gray-900 font-bold text-lg mb-1">Quick Pay</h3>
-            <p className="text-gray-600 text-sm mb-5">Tap to pay at participating restaurants</p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" onClick={() => setActiveModal(null)}>
+          <div className="bg-gray-900 rounded-3xl w-full max-w-md p-6 mx-4 border border-gray-700" onClick={(e) => e.stopPropagation()}>
+            <div className="w-10 h-1 rounded-full bg-gray-600 mx-auto mb-5"></div>
+            <h3 className="text-white font-bold text-lg mb-1">Quick Pay</h3>
+            <p className="text-gray-400 text-sm mb-5">Tap to pay at participating restaurants</p>
             <div className="space-y-4">
               <div>
-                <label className="text-gray-700 text-xs uppercase tracking-wider font-semibold">Amount</label>
-                <div className="flex items-center gap-2 p-4 rounded-xl bg-gray-100 border border-gray-200 mt-1">
+                <label className="text-gray-300 text-xs uppercase tracking-wider font-semibold">Amount</label>
+                <div className="flex items-center gap-2 p-4 rounded-xl bg-gray-800 border border-gray-700 mt-1">
                   <span className="text-gray-400 text-xl">$</span>
-                  <input type="number" placeholder="0.00" className="bg-transparent text-gray-900 text-2xl font-bold outline-none w-full font-mono" value={payAmount} onChange={(e) => setPayAmount(e.target.value)} min="0" step="0.01" />
+                  <input type="number" placeholder="0.00" className="bg-transparent text-white text-2xl font-bold outline-none w-full font-mono" value={payAmount} onChange={(e) => setPayAmount(e.target.value)} min="0" step="0.01" />
                 </div>
               </div>
-              <button onClick={handleQuickPay} disabled={payLoading} className="w-full py-4 rounded-xl text-white font-semibold text-sm" style={{ background: 'linear-gradient(135deg, #ff6b9d, #c44569)' }}>
+              <button onClick={handleQuickPay} disabled={payLoading} className="w-full py-4 rounded-xl text-white font-semibold text-sm bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 transition">
                 {payLoading ? 'Processing...' : 'Pay Now'}
               </button>
-              <button onClick={() => setActiveModal(null)} className="w-full py-3 rounded-xl text-gray-600 text-sm font-semibold">Cancel</button>
+              <button onClick={() => setActiveModal(null)} className="w-full py-3 rounded-xl text-gray-400 text-sm font-semibold hover:text-white transition">Cancel</button>
             </div>
           </div>
         </div>
@@ -649,30 +677,30 @@ export function Wallet() {
 
       {/* Top Up Modal */}
       {activeModal === 'topup' && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setActiveModal(null)}>
-          <div className="bg-white rounded-3xl w-full max-w-md p-6 mx-4" onClick={(e) => e.stopPropagation()}>
-            <div className="w-10 h-1 rounded-full bg-gray-300 mx-auto mb-5"></div>
-            <h3 className="text-gray-900 font-bold text-lg mb-1">Top Up Balance</h3>
-            <p className="text-gray-600 text-sm mb-5">Add funds to your Marryshow Card</p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" onClick={() => setActiveModal(null)}>
+          <div className="bg-gray-900 rounded-3xl w-full max-w-md p-6 mx-4 border border-gray-700" onClick={(e) => e.stopPropagation()}>
+            <div className="w-10 h-1 rounded-full bg-gray-600 mx-auto mb-5"></div>
+            <h3 className="text-white font-bold text-lg mb-1">Top Up Balance</h3>
+            <p className="text-gray-400 text-sm mb-5">Add funds to your Marryshow Card</p>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 {[25, 50, 100, 250].map(amt => (
-                  <button key={amt} onClick={() => handleTopUp(amt)} className="p-4 rounded-xl text-center border border-gray-200 bg-white hover:bg-gray-50">
-                    <span className="text-gray-900 font-bold text-lg">${amt}</span>
+                  <button key={amt} onClick={() => handleTopUp(amt)} className="p-4 rounded-xl text-center border border-gray-700 bg-gray-800 hover:bg-gray-700 transition">
+                    <span className="text-white font-bold text-lg">${amt}</span>
                   </button>
                 ))}
               </div>
               <div>
-                <label className="text-gray-700 text-xs uppercase tracking-wider font-semibold">Custom Amount</label>
+                <label className="text-gray-300 text-xs uppercase tracking-wider font-semibold">Custom Amount</label>
                 <div className="flex gap-2 mt-1">
-                  <div className="flex-1 flex items-center gap-2 p-3 rounded-xl bg-gray-100 border border-gray-200">
+                  <div className="flex-1 flex items-center gap-2 p-3 rounded-xl bg-gray-800 border border-gray-700">
                     <span className="text-gray-400">$</span>
-                    <input type="number" placeholder="0.00" className="bg-transparent text-gray-900 font-bold outline-none w-full font-mono" value={customTopUp} onChange={(e) => setCustomTopUp(e.target.value)} min="0" step="0.01" />
+                    <input type="number" placeholder="0.00" className="bg-transparent text-white font-bold outline-none w-full font-mono" value={customTopUp} onChange={(e) => setCustomTopUp(e.target.value)} min="0" step="0.01" />
                   </div>
-                  <button onClick={() => handleTopUp(parseFloat(customTopUp))} className="px-5 rounded-xl text-white font-semibold text-sm" style={{ background: 'linear-gradient(135deg, #22c55e, #16a34a)' }}>Add</button>
+                  <button onClick={() => handleTopUp(parseFloat(customTopUp))} className="px-5 rounded-xl text-white font-semibold text-sm bg-green-600 hover:bg-green-500 transition">Add</button>
                 </div>
               </div>
-              <button onClick={() => setActiveModal(null)} className="w-full py-3 rounded-xl text-gray-600 text-sm font-semibold">Cancel</button>
+              <button onClick={() => setActiveModal(null)} className="w-full py-3 rounded-xl text-gray-400 text-sm font-semibold hover:text-white transition">Cancel</button>
             </div>
           </div>
         </div>
@@ -680,31 +708,31 @@ export function Wallet() {
 
       {/* Send/Request Modal */}
       {activeModal === 'sendreceive' && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setActiveModal(null)}>
-          <div className="bg-white rounded-3xl w-full max-w-md p-6 mx-4" onClick={(e) => e.stopPropagation()}>
-            <div className="w-10 h-1 rounded-full bg-gray-300 mx-auto mb-5"></div>
-            <h3 className="text-gray-900 font-bold text-lg mb-1">Send or Request</h3>
-            <p className="text-gray-600 text-sm mb-5">Send money or request from students</p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" onClick={() => setActiveModal(null)}>
+          <div className="bg-gray-900 rounded-3xl w-full max-w-md p-6 mx-4 border border-gray-700" onClick={(e) => e.stopPropagation()}>
+            <div className="w-10 h-1 rounded-full bg-gray-600 mx-auto mb-5"></div>
+            <h3 className="text-white font-bold text-lg mb-1">Send or Request</h3>
+            <p className="text-gray-400 text-sm mb-5">Send money or request from students</p>
             <div className="flex gap-2 mb-5">
-              <button onClick={() => setIsRequestMode(false)} className={`flex-1 py-3 rounded-xl font-semibold text-sm ${!isRequestMode ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'}`}>Send Money</button>
-              <button onClick={() => setIsRequestMode(true)} className={`flex-1 py-3 rounded-xl font-semibold text-sm ${isRequestMode ? 'bg-amber-500 text-white' : 'bg-gray-100 text-gray-600'}`}>Request Money</button>
+              <button onClick={() => setIsRequestMode(false)} className={`flex-1 py-3 rounded-xl font-semibold text-sm ${!isRequestMode ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-300'}`}>Send Money</button>
+              <button onClick={() => setIsRequestMode(true)} className={`flex-1 py-3 rounded-xl font-semibold text-sm ${isRequestMode ? 'bg-amber-600 text-white' : 'bg-gray-800 text-gray-300'}`}>Request Money</button>
             </div>
             <div className="space-y-4">
               <div>
-                <label className="text-gray-700 text-xs uppercase tracking-wider font-semibold block mb-1">Recipient</label>
-                <input type="text" placeholder="Student name or ID" className="w-full bg-gray-100 text-gray-900 p-3.5 rounded-xl outline-none border border-gray-200" value={sendReceiveTo} onChange={(e) => setSendReceiveTo(e.target.value)} />
+                <label className="text-gray-300 text-xs uppercase tracking-wider font-semibold block mb-1">Recipient</label>
+                <input type="text" placeholder="Student name or ID" className="w-full bg-gray-800 text-white p-3.5 rounded-xl outline-none border border-gray-700 focus:border-yellow-500 transition" value={sendReceiveTo} onChange={(e) => setSendReceiveTo(e.target.value)} />
               </div>
               <div>
-                <label className="text-gray-700 text-xs uppercase tracking-wider font-semibold block mb-1">Amount</label>
-                <div className="flex items-center gap-2 p-3.5 rounded-xl bg-gray-100 border border-gray-200">
+                <label className="text-gray-300 text-xs uppercase tracking-wider font-semibold block mb-1">Amount</label>
+                <div className="flex items-center gap-2 p-3.5 rounded-xl bg-gray-800 border border-gray-700">
                   <span className="text-gray-400">$</span>
-                  <input type="number" placeholder="0.00" className="bg-transparent text-gray-900 font-bold outline-none w-full font-mono" value={sendReceiveAmount} onChange={(e) => setSendReceiveAmount(e.target.value)} min="0" step="0.01" />
+                  <input type="number" placeholder="0.00" className="bg-transparent text-white font-bold outline-none w-full font-mono" value={sendReceiveAmount} onChange={(e) => setSendReceiveAmount(e.target.value)} min="0" step="0.01" />
                 </div>
               </div>
-              <button onClick={isRequestMode ? handleRequest : handleSend} disabled={transferLoading} className="w-full py-4 rounded-xl text-white font-semibold text-sm" style={{ background: isRequestMode ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'linear-gradient(135deg, #3b82f6, #1d4ed8)' }}>
+              <button onClick={isRequestMode ? handleRequest : handleSend} disabled={transferLoading} className="w-full py-4 rounded-xl text-white font-semibold text-sm bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 transition">
                 {transferLoading ? 'Processing...' : (isRequestMode ? 'Request Now' : 'Send Now')}
               </button>
-              <button onClick={() => setActiveModal(null)} className="w-full py-3 rounded-xl text-gray-600 text-sm font-semibold">Cancel</button>
+              <button onClick={() => setActiveModal(null)} className="w-full py-3 rounded-xl text-gray-400 text-sm font-semibold hover:text-white transition">Cancel</button>
             </div>
           </div>
         </div>
@@ -712,27 +740,27 @@ export function Wallet() {
 
       {/* History Modal (Full Transaction List) */}
       {activeModal === 'history' && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setActiveModal(null)}>
-          <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[80vh] overflow-y-auto p-6 mx-4" onClick={(e) => e.stopPropagation()}>
-            <div className="w-10 h-1 rounded-full bg-gray-300 mx-auto mb-5"></div>
-            <h3 className="text-gray-900 font-bold text-lg mb-1">All Transactions</h3>
-            <p className="text-gray-600 text-sm mb-5">Your complete activity history</p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" onClick={() => setActiveModal(null)}>
+          <div className="bg-gray-900 rounded-3xl w-full max-w-2xl max-h-[80vh] overflow-y-auto p-6 mx-4 border border-gray-700" onClick={(e) => e.stopPropagation()}>
+            <div className="w-10 h-1 rounded-full bg-gray-600 mx-auto mb-5"></div>
+            <h3 className="text-white font-bold text-lg mb-1">All Transactions</h3>
+            <p className="text-gray-400 text-sm mb-5">Your complete activity history</p>
             <div className="space-y-3">
               {transactions.map(tx => (
-                <div key={tx.id} className="flex items-center gap-3 py-3 border-b border-gray-200 last:border-0">
+                <div key={tx.id} className="flex items-center gap-3 py-3 border-b border-gray-800 last:border-0">
                   <span className="text-lg">{tx.emoji}</span>
                   <div className="flex-1">
-                    <p className="text-gray-900 text-sm font-semibold">{tx.description}</p>
+                    <p className="text-white text-sm font-semibold">{tx.description}</p>
                     <p className="text-gray-500 text-[11px]">{tx.timeStr}</p>
                   </div>
-                  <span className={`text-sm font-bold font-mono ${tx.type === 'credit' ? 'text-green-600' : 'text-gray-700'}`}>
+                  <span className={`text-sm font-bold font-mono ${tx.type === 'credit' ? 'text-green-400' : 'text-gray-300'}`}>
                     {tx.type === 'credit' ? '+' : '-'}${Math.abs(tx.amount).toFixed(2)}
                   </span>
                 </div>
               ))}
-              {transactions.length === 0 && <p className="text-center text-gray-500 py-8">No transactions found</p>}
+              {transactions.length === 0 && <p className="text-center text-gray-400 py-8">No transactions found</p>}
             </div>
-            <button onClick={() => setActiveModal(null)} className="w-full py-3 mt-4 rounded-xl text-gray-600 text-sm font-semibold">Close</button>
+            <button onClick={() => setActiveModal(null)} className="w-full py-3 mt-4 rounded-xl text-gray-400 text-sm font-semibold hover:text-white transition">Close</button>
           </div>
         </div>
       )}
@@ -747,10 +775,6 @@ export function Wallet() {
         .quick-action:hover {
           transform: translateY(-4px);
         }
-        .tab-active {
-          color: #ff6b9d;
-          border-bottom: 3px solid #ff6b9d;
-        }
         .tx-item {
           animation: slideUp 0.3s ease forwards;
           opacity: 0;
@@ -759,14 +783,7 @@ export function Wallet() {
           to { opacity: 1; transform: translateY(0); }
           from { opacity: 0; transform: translateY(12px); }
         }
-        .nfc-wave {
-          animation: pulse 2s ease-in-out infinite;
-        }
-        @keyframes pulse {
-          0%, 100% { opacity: 0.5; }
-          50% { opacity: 1; }
-        }
-        /* NFC Card Animations */
+        /* NFC Card Animations (kept for compatibility) */
         .nfc-pulse-indicator {
           animation: nfcPulse 1.5s ease-in-out infinite;
         }
@@ -805,10 +822,10 @@ export function Wallet() {
           100% { transform: scale(1) translateY(0); }
         }
         .card-glow {
-          box-shadow: 0 0 30px rgba(255, 107, 157, 0.5), 0 20px 50px rgba(255, 107, 157, 0.3) !important;
+          box-shadow: 0 0 30px rgba(212,175,55,0.3), 0 20px 50px rgba(0,0,0,0.5) !important;
         }
         .nfc-ripple-effect {
-          background-color: rgba(255, 255, 255, 0.2);
+          background-color: rgba(255, 215, 0, 0.15);
           border-radius: inherit;
           pointer-events: none;
         }
@@ -816,8 +833,8 @@ export function Wallet() {
           animation: nfcRipple 0.8s ease-out forwards;
         }
         @keyframes nfcRipple {
-          0% { transform: scale(1); opacity: 1; background-color: rgba(255, 255, 255, 0.2); }
-          100% { transform: scale(1.3); opacity: 0; background-color: rgba(255, 255, 255, 0); }
+          0% { transform: scale(1); opacity: 1; background-color: rgba(255,215,0,0.15); }
+          100% { transform: scale(1.3); opacity: 0; background-color: rgba(255,215,0,0); }
         }
         .nfc-scan-effect {
           position: absolute;
@@ -835,7 +852,7 @@ export function Wallet() {
           transform: translate(-50%, -50%);
           width: 60px;
           height: 60px;
-          border: 3px solid rgba(255, 255, 255, 0.6);
+          border: 3px solid rgba(212,175,55,0.6);
           border-radius: 50%;
           animation: nfcScan 1.8s ease-out forwards;
         }

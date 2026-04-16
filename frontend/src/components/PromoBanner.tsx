@@ -14,19 +14,19 @@ interface PromoBanner {
 const promos: PromoBanner[] = [
   {
     id: 'promo-1',
-    message: '🎉 Get 20% OFF on all breakfast items this week! Use code: BREAKFAST20',
-    bgColor: 'bg-gradient-to-r from-orange-500 to-pink-500',
+    message: '🎉 Welcome to Marryshow\'s Mealhouse. Skip the lines and order online! 🎉',
+    bgColor: 'bg-gradient-to-r from-red-500 to-green-500 to-yellow-500',
     textColor: 'text-white',
     ctaText: 'Order Now',
     ctaLink: '/menu',
   },
   {
     id: 'promo-2',
-    message: '☕ Free iced coffee with any combo meal today only!',
-    bgColor: 'bg-gradient-to-r from-blue-500 to-purple-500',
+    message: '💳 Instead of using cash, pay with you Marryshow card for a faster checkout! 💳',
+    bgColor: 'bg-gradient-to-r from-black-500 to-gold-500',
     textColor: 'text-white',
-    ctaText: 'View Combos',
-    ctaLink: '/menu',
+    ctaText: 'View Wallet',
+    ctaLink: '/wallet',
   },
 ];
 
@@ -41,7 +41,7 @@ export function PromoBanner() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentPromo((prev) => (prev + 1) % promos.length);
-    }, 5000);
+    }, 10000);
     return () => clearInterval(timer);
   }, []);
 
